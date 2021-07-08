@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/config")
 @SecurityRequirement(name = "auth")
 @Tag(name = "Configurations",description = "用户配置服务，提供 Key-Value 的存储。")
 public class ConfigurationController {
@@ -27,7 +27,7 @@ public class ConfigurationController {
     private Log logger = LogFactory.getLog(getClass());
 
     @Operation(summary = "获取用户配置",description = "获取应用的用户的配置。")
-    @GetMapping("/config/{name}")
+    @GetMapping("/{name}")
     public Mono<Map<String,?>> getConfiguration(@PathVariable(name = "name") String name,
                                                 AbstractOAuth2TokenAuthenticationToken principal) {
         AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
@@ -37,7 +37,7 @@ public class ConfigurationController {
     }
 
     @Operation(summary = "设置用户配置",description = "新增或更新用户配置。")
-    @PutMapping("/config/{name}")
+    @PutMapping("/{name}")
     public Mono<Void> setConfiguration(@PathVariable(name = "name") String name,
                                        @RequestBody Map<String,?> config,
                                        AbstractOAuth2TokenAuthenticationToken principal) {

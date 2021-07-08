@@ -19,15 +19,17 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Test implements ConfigurationService {
+public class MongoConfigurationService implements ConfigurationService {
 
-    ReactiveMongoOperations operations;
-    public static Log logger = LogFactory.getLog(Test.class);
+    private ReactiveMongoOperations operations;
+    private String collectionName;
+
+    protected static Log logger = LogFactory.getLog(MongoConfigurationService.class);
 
     @Override
     public Mono<Map<String, ?>> getConfiguration(String clientId, String userId, String name) {
         Query q = new Query(where("clientId").is(clientId).and("userId").is(userId).and("name").is(name));
-        return operations.findOne(q, Configuration.class,"config")
+        return operations.findOne(q, Configuration.class,collectionName)
                 .map(configuration -> {
                     if(configuration == null)
                         return null;
@@ -39,7 +41,7 @@ public class Test implements ConfigurationService {
     @Override
     public Mono<Void> setConfiguration(String clientId, String userId, String name, Map<String, ?> config) {
         Query q = new Query(where("clientId").is(clientId).and("userId").is(userId).and("name").is(name));
-        return operations.upsert(q,new Update().set("data",config),Configuration.class,"config")
+        return operations.upsert(q,new Update().set("data",config),Configuration.class,collectionName)
                 .then();
     }
 }
