@@ -16,4 +16,6 @@ public class BaseStorageObject implements StorageObject {
 
     private String clientId,key,name,description,type;
 
+    private Long size;
+
 }

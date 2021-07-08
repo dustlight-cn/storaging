@@ -11,4 +11,7 @@ public interface StorageObject extends ACL,Datable {
     String getDescription();
 
     String getType();
+
+    Long getSize();
+
 }

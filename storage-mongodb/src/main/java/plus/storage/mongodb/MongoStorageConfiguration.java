@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.ReactiveMongoDatabaseFactory;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.util.StringUtils;
+import plus.storage.mongodb.services.MongoConfigurationService;
 
 @Configuration
 @EnableConfigurationProperties(MongoStorageProperties.class)

@@ -1,4 +1,4 @@
-package plus.storage.mongodb;
+package plus.storage.mongodb.services;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
