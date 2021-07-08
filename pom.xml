@@ -29,6 +29,7 @@
 
     <modules>
         <module>storage-core</module>
+        <module>storage-mongodb</module>
         <module>storage-service</module>
     </modules>
 
@@ -41,11 +42,23 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>plus.storage</groupId>
                 <artifactId>storage-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>plus.storage</groupId>
+                <artifactId>storage-mongodb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>plus.storage</groupId>
+                <artifactId>storage-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>plus.auth</groupId>
                 <artifactId>auth-common</artifactId>
