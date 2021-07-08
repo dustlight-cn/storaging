@@ -15,39 +15,39 @@ public class UrlStorageService<T extends StorageObject> implements ObjectUrlGene
     private StorageService storageService;
 
     @Override
-    public String generateGetUrl(String key, long expiresIn) {
-        return urlGenerator.generateGetUrl(key, expiresIn);
+    public String generateGetUrl(String id, long expiresIn) {
+        return urlGenerator.generateGetUrl(id, expiresIn);
     }
 
     @Override
-    public String generatePut(String key, long expiresIn) {
-        return urlGenerator.generatePut(key, expiresIn);
+    public String generatePut(String id, long expiresIn) {
+        return urlGenerator.generatePut(id, expiresIn);
     }
 
     @Override
-    public void deleteNow(String key) {
-        this.delete(key).block();
+    public void deleteNow(String id) {
+        this.delete(id).block();
     }
 
     @Override
-    public Mono<T> create(T object) {
+    public Mono<T> create(StorageObject object) {
         return storageService.create(object);
     }
 
     @Override
-    public Mono<T> get(String key) {
-        return storageService.get(key);
+    public Mono<T> get(String id) {
+        return storageService.get(id);
     }
 
     @Override
-    public Mono<Void> put(T object) {
+    public Mono<Void> put(StorageObject object) {
         return storageService.put(object);
     }
 
     @Override
-    public Mono<Void> delete(String key) {
-        return storageService.delete(key).doOnSuccess(v -> {
-            urlGenerator.deleteNow(key);
+    public Mono<Void> delete(String id) {
+        return storageService.delete(id).doOnSuccess(v -> {
+            urlGenerator.deleteNow(id);
         });
     }
 }

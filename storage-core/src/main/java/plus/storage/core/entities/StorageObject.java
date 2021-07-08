@@ -1,10 +1,12 @@
 package plus.storage.core.entities;
 
+import java.util.Map;
+
 public interface StorageObject extends ACL,Datable {
 
     String getClientId();
 
-    String getKey();
+    String getId();
 
     String getName();
 
@@ -14,4 +16,5 @@ public interface StorageObject extends ACL,Datable {
 
     Long getSize();
 
+    Map<String,Object> getAdditional();
 }

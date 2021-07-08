@@ -5,12 +5,12 @@ import reactor.core.publisher.Mono;
 
 public interface StorageService<T extends StorageObject> {
 
-    Mono<T> create(T object);
+    Mono<T> create(StorageObject object);
 
-    Mono<T> get(String key);
+    Mono<T> get(String id);
 
-    Mono<Void> put(T object);
+    Mono<Void> put(StorageObject object);
 
-    Mono<Void> delete(String key);
+    Mono<Void> delete(String id);
 
 }

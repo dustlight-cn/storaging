@@ -6,6 +6,9 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import plus.storage.core.ObjectNotFoundException;
+import plus.storage.core.entities.BaseStorageObject;
+import plus.storage.core.entities.StorageObject;
 import plus.storage.core.services.StorageService;
 import reactor.core.publisher.Mono;
 
@@ -16,26 +19,39 @@ import static org.springframework.data.mongodb.core.query.Criteria.*;
 @Getter
 @Setter
 @AllArgsConstructor
-public class MongoStorageService implements StorageService<MongoStorageObject> {
+public class MongoStorageService implements StorageService<BaseStorageObject> {
 
     private ReactiveMongoOperations operations;
     private String collectionName;
 
     @Override
-    public Mono<MongoStorageObject> create(MongoStorageObject object) {
+    public Mono<BaseStorageObject> create(StorageObject object) {
+        BaseStorageObject origin = new BaseStorageObject();
+
+        origin.setOwner(object.getOwner());
+        origin.setCanRead(object.getCanRead());
+        origin.setCanWrite(object.getCanWrite());
+
+        origin.setClientId(object.getClientId());
+        origin.setDescription(object.getDescription());
+        origin.setName(object.getName());
+        origin.setSize(object.getSize());
+        origin.setType(object.getType());
+        origin.setId(null);
+
         Date t = new Date();
-        object.setCreatedAt(t);
-        object.setUpdatedAt(t);
-        return operations.save(object,collectionName);
+        origin.setCreatedAt(t);
+        origin.setUpdatedAt(t);
+        return operations.insert(origin,collectionName);
     }
 
     @Override
-    public Mono<MongoStorageObject> get(String key) {
-        return operations.findOne(new Query(where("key").is(key)),MongoStorageObject.class,collectionName);
+    public Mono<BaseStorageObject> get(String key) {
+        return operations.findById(key,BaseStorageObject.class,collectionName);
     }
 
     @Override
-    public Mono<Void> put(MongoStorageObject object) {
+    public Mono<Void> put(StorageObject object) {
         Update update = new Update();
         if(object.getName() != null)
             update.set("name",object.getName());
@@ -55,18 +71,21 @@ public class MongoStorageService implements StorageService<MongoStorageObject> {
             update.set("clientId",object.getClientId());
 
         update.set("updatedAt", new Date());
-        return operations.updateFirst(new Query(where("key").is(object.getKey())),
+        return operations.updateFirst(Query.query(where("_id").is(object.getId())),
                 update,
-                MongoStorageObject.class,
+                BaseStorageObject.class,
                 collectionName)
                 .then();
     }
 
     @Override
     public Mono<Void> delete(String key) {
-        return operations
-                .remove(new Query(where("key").is(key)), collectionName)
-                .then();
+        return operations.findAndRemove(new Query(where("_id").is(key)),BaseStorageObject.class,collectionName)
+                .flatMap(object -> {
+                    if(object == null)
+                        return Mono.error(new ObjectNotFoundException("Object not found: " + key));
+                    return Mono.empty();
+                });
     }
 
 }

@@ -9,6 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "plus.storage")
 public class MongoStorageProperties {
 
-    private String database,configCollectionName,fileCollectionName;
+    private String configCollectionName = "configs",objectCollectionName = "objects";
 
 }

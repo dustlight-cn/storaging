@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1/config")
+@RequestMapping("/v1/configs")
 @SecurityRequirement(name = "auth")
 @Tag(name = "Configurations",description = "用户配置服务，提供 Key-Value 的存储。")
 public class ConfigurationController {

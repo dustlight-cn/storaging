@@ -8,11 +8,10 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>storage-mongodb</artifactId>
-    <description>PLUS 对象存储服务 - MongoDB 实现模块</description>
+    <artifactId>storage-cloud</artifactId>
+    <description>PLUS 对象存储服务 - 云服务模块</description>
 
     <dependencies>
-
         <dependency>
             <groupId>plus.storage</groupId>
             <artifactId>storage-core</artifactId>
@@ -30,11 +29,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -46,6 +40,14 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>cn.dustlight.storage</groupId>
+            <artifactId>tencent-cloud-object-storage</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dustlight.storage</groupId>
+            <artifactId>alibaba-cloud-object-storage</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -29,6 +29,7 @@
 
     <modules>
         <module>storage-core</module>
+        <module>storage-cloud</module>
         <module>storage-mongodb</module>
         <module>storage-service</module>
     </modules>
@@ -55,6 +56,11 @@
             </dependency>
             <dependency>
                 <groupId>plus.storage</groupId>
+                <artifactId>storage-cloud</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>plus.storage</groupId>
                 <artifactId>storage-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -75,8 +81,10 @@
 
             <dependency>
                 <groupId>cn.dustlight.storage</groupId>
-                <artifactId>storage-parent</artifactId>
+                <artifactId>storage</artifactId>
                 <version>${storage.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -86,16 +94,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
