@@ -14,15 +14,17 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <repackage.classifier/>
-        <spring-native.version>0.10.1</spring-native.version>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <repackage.classifier/>
+
+        <spring-native.version>0.10.1</spring-native.version>
 
         <spring-boot.version>2.5.2</spring-boot.version>
         <springdoc.version>1.5.9</springdoc.version>
 
         <auth.version>1.1.0-alpha-SNAPSHOT</auth.version>
+        <storage.version>0.0.4</storage.version>
     </properties>
 
     <modules>
@@ -56,6 +58,12 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-webflux-ui</artifactId>
                 <version>${springdoc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.dustlight.storage</groupId>
+                <artifactId>storage-parent</artifactId>
+                <version>${storage.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
