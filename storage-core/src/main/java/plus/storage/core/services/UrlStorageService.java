@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
+import plus.storage.core.entities.QueryResult;
 import plus.storage.core.entities.StorageObject;
 import reactor.core.publisher.Mono;
+
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -50,5 +53,14 @@ public class UrlStorageService<T extends StorageObject> implements ObjectUrlGene
     @Override
     public Mono<Boolean> exists(String id) {
         return storageService.exists(id);
+    }
+
+    @Override
+    public Mono<QueryResult<T>> find(String keywords,
+                                     int page,
+                                     int size,
+                                     String clientId,
+                                     String owner) {
+        return storageService.find(keywords, page, size, clientId, owner);
     }
 }

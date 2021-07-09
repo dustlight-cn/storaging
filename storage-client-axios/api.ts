@@ -103,6 +103,25 @@ export interface BaseStorageObject {
 /**
  * 
  * @export
+ * @interface QueryResultStorageObject
+ */
+export interface QueryResultStorageObject {
+    /**
+     * 
+     * @type {number}
+     * @memberof QueryResultStorageObject
+     */
+    count?: number;
+    /**
+     * 
+     * @type {Array<StorageObject>}
+     * @memberof QueryResultStorageObject
+     */
+    data?: Array<StorageObject>;
+}
+/**
+ * 
+ * @export
  * @interface StorageObject
  */
 export interface StorageObject {
@@ -138,16 +157,16 @@ export interface StorageObject {
     description?: string;
     /**
      * 
-     * @type {string}
-     * @memberof StorageObject
-     */
-    clientId?: string;
-    /**
-     * 
      * @type {{ [key: string]: object; }}
      * @memberof StorageObject
      */
     additional?: { [key: string]: object; };
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    clientId?: string;
     /**
      * 
      * @type {Array<string>}
@@ -159,25 +178,25 @@ export interface StorageObject {
      * @type {Array<string>}
      * @memberof StorageObject
      */
-    canRead?: Array<string>;
+    canWrite?: Array<string>;
     /**
      * 
      * @type {Array<string>}
      * @memberof StorageObject
      */
-    canWrite?: Array<string>;
-    /**
-     * 
-     * @type {string}
-     * @memberof StorageObject
-     */
-    updatedAt?: string;
+    canRead?: Array<string>;
     /**
      * 
      * @type {string}
      * @memberof StorageObject
      */
     createdAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    updatedAt?: string;
 }
 
 /**
@@ -454,6 +473,55 @@ export const ObjectsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * 查找对象的数据。
+         * @summary 查找对象
+         * @param {string} [q] 
+         * @param {number} [page] 
+         * @param {number} [size] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        findObjects: async (q?: string, page?: number, size?: number, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/objects`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "auth", [], configuration)
+
+            if (q !== undefined) {
+                localVarQueryParameter['q'] = q;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 获取指定对象。
          * @summary 获取对象
          * @param {string} id 
@@ -655,6 +723,19 @@ export const ObjectsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * 查找对象的数据。
+         * @summary 查找对象
+         * @param {string} [q] 
+         * @param {number} [page] 
+         * @param {number} [size] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async findObjects(q?: string, page?: number, size?: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueryResultStorageObject>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.findObjects(q, page, size, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * 获取指定对象。
          * @summary 获取对象
          * @param {string} id 
@@ -732,6 +813,18 @@ export const ObjectsApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteObject(id, options).then((request) => request(axios, basePath));
         },
         /**
+         * 查找对象的数据。
+         * @summary 查找对象
+         * @param {string} [q] 
+         * @param {number} [page] 
+         * @param {number} [size] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        findObjects(q?: string, page?: number, size?: number, options?: any): AxiosPromise<QueryResultStorageObject> {
+            return localVarFp.findObjects(q, page, size, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 获取指定对象。
          * @summary 获取对象
          * @param {string} id 
@@ -806,6 +899,20 @@ export class ObjectsApi extends BaseAPI {
      */
     public deleteObject(id: string, options?: any) {
         return ObjectsApiFp(this.configuration).deleteObject(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 查找对象的数据。
+     * @summary 查找对象
+     * @param {string} [q] 
+     * @param {number} [page] 
+     * @param {number} [size] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ObjectsApi
+     */
+    public findObjects(q?: string, page?: number, size?: number, options?: any) {
+        return ObjectsApiFp(this.configuration).findObjects(q, page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

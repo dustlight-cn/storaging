@@ -15,6 +15,7 @@ import plus.auth.resources.AuthPrincipalUtil;
 import plus.auth.resources.core.AuthPrincipal;
 import plus.storage.core.ErrorEnum;
 import plus.storage.core.entities.BaseStorageObject;
+import plus.storage.core.entities.QueryResult;
 import plus.storage.core.entities.StorageObject;
 import plus.storage.core.services.UrlStorageService;
 import reactor.core.publisher.Mono;
@@ -150,5 +151,16 @@ public class ObjectController {
                                 return storageService.put(origin);
                             });
                 });
+    }
+
+    @Operation(summary = "查找对象", description = "查找对象的数据。")
+    @GetMapping("")
+    public Mono<QueryResult<StorageObject>> findObjects(@RequestParam(name = "q", required = false) String keywords,
+                                                        @RequestParam(name = "page", defaultValue = "1") int page,
+                                                        @RequestParam(name = "size", defaultValue = "10") int size,
+                                                        AbstractOAuth2TokenAuthenticationToken principal) {
+
+        AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
+        return storageService.find(keywords, page, size, authPrincipal.getClientId(), authPrincipal.getUid().toString());
     }
 }
