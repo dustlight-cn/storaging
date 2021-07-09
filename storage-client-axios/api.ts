@@ -21,6 +21,164 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
 
+/**
+ * 
+ * @export
+ * @interface BaseStorageObject
+ */
+export interface BaseStorageObject {
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof BaseStorageObject
+     */
+    owner?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof BaseStorageObject
+     */
+    canRead?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof BaseStorageObject
+     */
+    canWrite?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    updatedAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    createdAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    clientId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseStorageObject
+     */
+    type?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof BaseStorageObject
+     */
+    size?: number;
+    /**
+     * 
+     * @type {{ [key: string]: object; }}
+     * @memberof BaseStorageObject
+     */
+    additional?: { [key: string]: object; };
+}
+/**
+ * 
+ * @export
+ * @interface StorageObject
+ */
+export interface StorageObject {
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    type?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof StorageObject
+     */
+    size?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    clientId?: string;
+    /**
+     * 
+     * @type {{ [key: string]: object; }}
+     * @memberof StorageObject
+     */
+    additional?: { [key: string]: object; };
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof StorageObject
+     */
+    owner?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof StorageObject
+     */
+    canRead?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof StorageObject
+     */
+    canWrite?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    updatedAt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StorageObject
+     */
+    createdAt?: string;
+}
 
 /**
  * ConfigurationsApi - axios parameter creator
@@ -38,7 +196,7 @@ export const ConfigurationsApiAxiosParamCreator = function (configuration?: Conf
         getConfiguration: async (name: string, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'name' is not null or undefined
             assertParamExists('getConfiguration', 'name', name)
-            const localVarPath = `/v1/config/{name}`
+            const localVarPath = `/v1/configs/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -79,7 +237,7 @@ export const ConfigurationsApiAxiosParamCreator = function (configuration?: Conf
             assertParamExists('setConfiguration', 'name', name)
             // verify required parameter 'requestBody' is not null or undefined
             assertParamExists('setConfiguration', 'requestBody', requestBody)
-            const localVarPath = `/v1/config/{name}`
+            const localVarPath = `/v1/configs/{name}`
                 .replace(`{${"name"}}`, encodeURIComponent(String(name)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -212,18 +370,101 @@ export class ConfigurationsApi extends BaseAPI {
 
 
 /**
- * TestControllerApi - axios parameter creator
+ * ObjectsApi - axios parameter creator
  * @export
  */
-export const TestControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ObjectsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
+         * 创建一个对象。
+         * @summary 创建对象
+         * @param {BaseStorageObject} baseStorageObject 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        index: async (options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/index`;
+        createObject: async (baseStorageObject: BaseStorageObject, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'baseStorageObject' is not null or undefined
+            assertParamExists('createObject', 'baseStorageObject', baseStorageObject)
+            const localVarPath = `/v1/objects`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "auth", [], configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(baseStorageObject, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 删除指定对象。
+         * @summary 删除对象
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteObject: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteObject', 'id', id)
+            const localVarPath = `/v1/objects/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "auth", [], configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 获取指定对象。
+         * @summary 获取对象
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getObject: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getObject', 'id', id)
+            const localVarPath = `/v1/objects/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -251,15 +492,58 @@ export const TestControllerApiAxiosParamCreator = function (configuration?: Conf
             };
         },
         /**
-         * 
-         * @param {any} body 
+         * 获取对象的数据。
+         * @summary 获取对象数据
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        put: async (body: any, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'body' is not null or undefined
-            assertParamExists('put', 'body', body)
-            const localVarPath = `/put`;
+        getObjectData: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getObjectData', 'id', id)
+            const localVarPath = `/v1/objects/{id}/data`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "auth", [], configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 更新指定对象。
+         * @summary 更新对象
+         * @param {string} id 
+         * @param {BaseStorageObject} baseStorageObject 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putObject: async (id: string, baseStorageObject: BaseStorageObject, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putObject', 'id', id)
+            // verify required parameter 'baseStorageObject' is not null or undefined
+            assertParamExists('putObject', 'baseStorageObject', baseStorageObject)
+            const localVarPath = `/v1/objects/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -277,7 +561,56 @@ export const TestControllerApiAxiosParamCreator = function (configuration?: Conf
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'image/_*';
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(baseStorageObject, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 更新对象的数据。
+         * @summary 更新对象数据
+         * @param {string} id 
+         * @param {any} body 
+         * @param {string} [contentDisposition] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putObjectData: async (id: string, body: any, contentDisposition?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putObjectData', 'id', id)
+            // verify required parameter 'body' is not null or undefined
+            assertParamExists('putObjectData', 'body', body)
+            const localVarPath = `/v1/objects/{id}/data`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication auth required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "auth", [], configuration)
+
+            if (contentDisposition !== undefined && contentDisposition !== null) {
+                localVarHeaderParameter['Content-Disposition'] = String(contentDisposition);
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/octet-stream';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -293,87 +626,237 @@ export const TestControllerApiAxiosParamCreator = function (configuration?: Conf
 };
 
 /**
- * TestControllerApi - functional programming interface
+ * ObjectsApi - functional programming interface
  * @export
  */
-export const TestControllerApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = TestControllerApiAxiosParamCreator(configuration)
+export const ObjectsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ObjectsApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
+         * 创建一个对象。
+         * @summary 创建对象
+         * @param {BaseStorageObject} baseStorageObject 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async index(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.index(options);
+        async createObject(baseStorageObject: BaseStorageObject, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorageObject>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createObject(baseStorageObject, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * 
-         * @param {any} body 
+         * 删除指定对象。
+         * @summary 删除对象
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async put(body: any, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.put(body, options);
+        async deleteObject(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteObject(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 获取指定对象。
+         * @summary 获取对象
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getObject(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorageObject>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getObject(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 获取对象的数据。
+         * @summary 获取对象数据
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getObjectData(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getObjectData(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 更新指定对象。
+         * @summary 更新对象
+         * @param {string} id 
+         * @param {BaseStorageObject} baseStorageObject 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putObject(id: string, baseStorageObject: BaseStorageObject, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putObject(id, baseStorageObject, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 更新对象的数据。
+         * @summary 更新对象数据
+         * @param {string} id 
+         * @param {any} body 
+         * @param {string} [contentDisposition] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putObjectData(id: string, body: any, contentDisposition?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putObjectData(id, body, contentDisposition, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
 
 /**
- * TestControllerApi - factory interface
+ * ObjectsApi - factory interface
  * @export
  */
-export const TestControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = TestControllerApiFp(configuration)
+export const ObjectsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ObjectsApiFp(configuration)
     return {
         /**
-         * 
+         * 创建一个对象。
+         * @summary 创建对象
+         * @param {BaseStorageObject} baseStorageObject 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        index(options?: any): AxiosPromise<object> {
-            return localVarFp.index(options).then((request) => request(axios, basePath));
+        createObject(baseStorageObject: BaseStorageObject, options?: any): AxiosPromise<StorageObject> {
+            return localVarFp.createObject(baseStorageObject, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
-         * @param {any} body 
+         * 删除指定对象。
+         * @summary 删除对象
+         * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        put(body: any, options?: any): AxiosPromise<void> {
-            return localVarFp.put(body, options).then((request) => request(axios, basePath));
+        deleteObject(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteObject(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 获取指定对象。
+         * @summary 获取对象
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getObject(id: string, options?: any): AxiosPromise<StorageObject> {
+            return localVarFp.getObject(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 获取对象的数据。
+         * @summary 获取对象数据
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getObjectData(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.getObjectData(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 更新指定对象。
+         * @summary 更新对象
+         * @param {string} id 
+         * @param {BaseStorageObject} baseStorageObject 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putObject(id: string, baseStorageObject: BaseStorageObject, options?: any): AxiosPromise<void> {
+            return localVarFp.putObject(id, baseStorageObject, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 更新对象的数据。
+         * @summary 更新对象数据
+         * @param {string} id 
+         * @param {any} body 
+         * @param {string} [contentDisposition] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putObjectData(id: string, body: any, contentDisposition?: string, options?: any): AxiosPromise<void> {
+            return localVarFp.putObjectData(id, body, contentDisposition, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * TestControllerApi - object-oriented interface
+ * ObjectsApi - object-oriented interface
  * @export
- * @class TestControllerApi
+ * @class ObjectsApi
  * @extends {BaseAPI}
  */
-export class TestControllerApi extends BaseAPI {
+export class ObjectsApi extends BaseAPI {
     /**
-     * 
+     * 创建一个对象。
+     * @summary 创建对象
+     * @param {BaseStorageObject} baseStorageObject 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TestControllerApi
+     * @memberof ObjectsApi
      */
-    public index(options?: any) {
-        return TestControllerApiFp(this.configuration).index(options).then((request) => request(this.axios, this.basePath));
+    public createObject(baseStorageObject: BaseStorageObject, options?: any) {
+        return ObjectsApiFp(this.configuration).createObject(baseStorageObject, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
-     * @param {any} body 
+     * 删除指定对象。
+     * @summary 删除对象
+     * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TestControllerApi
+     * @memberof ObjectsApi
      */
-    public put(body: any, options?: any) {
-        return TestControllerApiFp(this.configuration).put(body, options).then((request) => request(this.axios, this.basePath));
+    public deleteObject(id: string, options?: any) {
+        return ObjectsApiFp(this.configuration).deleteObject(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 获取指定对象。
+     * @summary 获取对象
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ObjectsApi
+     */
+    public getObject(id: string, options?: any) {
+        return ObjectsApiFp(this.configuration).getObject(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 获取对象的数据。
+     * @summary 获取对象数据
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ObjectsApi
+     */
+    public getObjectData(id: string, options?: any) {
+        return ObjectsApiFp(this.configuration).getObjectData(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 更新指定对象。
+     * @summary 更新对象
+     * @param {string} id 
+     * @param {BaseStorageObject} baseStorageObject 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ObjectsApi
+     */
+    public putObject(id: string, baseStorageObject: BaseStorageObject, options?: any) {
+        return ObjectsApiFp(this.configuration).putObject(id, baseStorageObject, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 更新对象的数据。
+     * @summary 更新对象数据
+     * @param {string} id 
+     * @param {any} body 
+     * @param {string} [contentDisposition] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ObjectsApi
+     */
+    public putObjectData(id: string, body: any, contentDisposition?: string, options?: any) {
+        return ObjectsApiFp(this.configuration).putObjectData(id, body, contentDisposition, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

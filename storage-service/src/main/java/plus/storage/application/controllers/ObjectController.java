@@ -30,16 +30,21 @@ public class ObjectController {
     @Autowired
     private UrlStorageService storageService;
 
-
-    @Operation(summary = "创建对象", description = "创建对象")
+    @Operation(summary = "创建对象", description = "创建一个对象。")
     @PostMapping("")
-    public Mono<StorageObject> createObject(ServerWebExchange exchange,
+    public Mono<StorageObject> createObject(@RequestBody BaseStorageObject object,
+                                            ServerWebExchange exchange,
                                             AbstractOAuth2TokenAuthenticationToken principal) {
 
         AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
 
         BaseStorageObject origin = new BaseStorageObject();
         origin.setClientId(authPrincipal.getClientId());
+        origin.setOwner(object.getOwner());
+        origin.setCanRead(object.getCanRead());
+        origin.setCanWrite(object.getCanWrite());
+        origin.setName(object.getName());
+        origin.setDescription(object.getDescription());
         if (origin.getOwner() == null) {
             origin.setOwner(Arrays.asList(authPrincipal.getUid().toString()));
         } else {
@@ -48,12 +53,14 @@ public class ObjectController {
         return storageService.create(origin);
     }
 
+    @Operation(summary = "获取对象", description = "获取指定对象。")
     @GetMapping("/{id}")
     public Mono<StorageObject> getObject(@PathVariable(name = "id") String id,
                                          AbstractOAuth2TokenAuthenticationToken principal) {
         return storageService.get(id);
     }
 
+    @Operation(summary = "更新对象", description = "更新指定对象。")
     @PutMapping("/{id}")
     public Mono<Void> putObject(@PathVariable(name = "id") String id,
                                 @RequestBody BaseStorageObject object,
@@ -77,12 +84,14 @@ public class ObjectController {
                 });
     }
 
+    @Operation(summary = "删除对象", description = "删除指定对象。")
     @DeleteMapping("/{id}")
     public Mono<Void> deleteObject(@PathVariable(name = "id") String id,
                                    AbstractOAuth2TokenAuthenticationToken principal) {
         return storageService.delete(id);
     }
 
+    @Operation(summary = "获取对象数据", description = "获取对象的数据。")
     @GetMapping("/{id}/data")
     public Mono<Void> getObjectData(@PathVariable(name = "id") String id,
                                     ServerWebExchange exchange,
@@ -102,8 +111,8 @@ public class ObjectController {
     }
 
     @PutMapping("/{id}/data")
-    @Operation(summary = "上传数据",
-            description = "",
+    @Operation(summary = "更新对象数据",
+            description = "更新对象的数据。",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
                     content = @Content(
                             mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
