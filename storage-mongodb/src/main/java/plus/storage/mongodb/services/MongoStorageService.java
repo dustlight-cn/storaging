@@ -6,7 +6,8 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import plus.storage.core.ObjectNotFoundException;
+import plus.storage.core.ErrorEnum;
+import plus.storage.core.StorageException;
 import plus.storage.core.entities.BaseStorageObject;
 import plus.storage.core.entities.StorageObject;
 import plus.storage.core.services.StorageService;
@@ -42,12 +43,15 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
         Date t = new Date();
         origin.setCreatedAt(t);
         origin.setUpdatedAt(t);
-        return operations.insert(origin,collectionName);
+        return operations.insert(origin,collectionName)
+                .onErrorMap(throwable -> ErrorEnum.CREATE_OBJECT_FAILED.details(throwable.getMessage()).getException());
     }
 
     @Override
-    public Mono<BaseStorageObject> get(String key) {
-        return operations.findById(key,BaseStorageObject.class,collectionName);
+    public Mono<BaseStorageObject> get(String id) {
+        return operations.findById(id,BaseStorageObject.class,collectionName)
+                .onErrorMap(throwable -> new StorageException("Get object failed: " + throwable.getMessage(),throwable))
+                .switchIfEmpty(Mono.error(ErrorEnum.OBJECT_NOT_FOUND.getException()));
     }
 
     @Override
@@ -75,17 +79,25 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
                 update,
                 BaseStorageObject.class,
                 collectionName)
+                .onErrorMap(throwable -> ErrorEnum.UPDATE_OBJECT_FAILED.details(throwable.getMessage()).getException())
+                .doOnSuccess(updateResult -> {
+                    if(updateResult.getMatchedCount() == 0)
+                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
+                })
                 .then();
     }
 
     @Override
-    public Mono<Void> delete(String key) {
-        return operations.findAndRemove(new Query(where("_id").is(key)),BaseStorageObject.class,collectionName)
-                .flatMap(object -> {
-                    if(object == null)
-                        return Mono.error(new ObjectNotFoundException("Object not found: " + key));
-                    return Mono.empty();
-                });
+    public Mono<Void> delete(String id) {
+        return operations.findAndRemove(new Query(where("_id").is(id)),BaseStorageObject.class,collectionName)
+                .onErrorMap(throwable -> ErrorEnum.DELETE_OBJECT_FAILED.details(throwable.getMessage()).getException())
+                .switchIfEmpty(Mono.error(ErrorEnum.OBJECT_NOT_FOUND.getException()))
+                .then();
+    }
+
+    @Override
+    public Mono<Boolean> exists(String id) {
+        return operations.exists(new Query(where("_id").is(id)),BaseStorageObject.class,collectionName);
     }
 
 }

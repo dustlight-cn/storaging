@@ -4,7 +4,10 @@ import cn.dustlight.storage.core.Permission;
 import cn.dustlight.storage.core.RestfulStorage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpHeaders;
+import plus.storage.core.StorageException;
 import plus.storage.core.services.ObjectUrlGenerator;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
@@ -15,29 +18,32 @@ public class CloudStorageService implements ObjectUrlGenerator {
     private RestfulStorage storage;
 
     @Override
-    public String generateGetUrl(String key, long expiresIn) {
+    public Mono<String> generateGetUrl(String key, long expiresIn) {
         try {
-            return storage.generateGetUrl(key, expiresIn);
+            return Mono.just(storage.generateGetUrl(key, expiresIn));
         } catch (IOException e) {
-            throw new RuntimeException("Fail to generate get url: " + key, e);
+            return Mono.error(new StorageException("Fail to generate get url: " + key, e));
         }
     }
 
     @Override
-    public String generatePut(String key, long expiresIn) {
+    public Mono<String> generatePut(String key, long expiresIn, HttpHeaders httpHeaders) {
         try {
-            return storage.generatePutUrl(key, Permission.PRIVATE, expiresIn);
+            if (httpHeaders == null)
+                return Mono.just(storage.generatePutUrl(key, Permission.PRIVATE, expiresIn));
+            return Mono.just(storage.generatePutUrl(key, Permission.PRIVATE, expiresIn, httpHeaders.toSingleValueMap()));
         } catch (IOException e) {
-            throw new RuntimeException("Fail to generate put url: " + key, e);
+            return Mono.error(new StorageException("Fail to generate put url: " + key, e));
         }
     }
 
     @Override
-    public void deleteNow(String key) {
+    public Mono<Void> delete(String key) {
         try {
             storage.remove(key);
+            return Mono.empty();
         } catch (IOException e) {
-            throw new RuntimeException("Fail to delete object now: " + key, e);
+            return Mono.error(new StorageException("Fail to delete object now: " + key, e));
         }
     }
 }

@@ -24,7 +24,7 @@
         <springdoc.version>1.5.9</springdoc.version>
 
         <auth.version>1.1.0-alpha-SNAPSHOT</auth.version>
-        <storage.version>0.0.4</storage.version>
+        <storage.version>0.0.5</storage.version>
     </properties>
 
     <modules>

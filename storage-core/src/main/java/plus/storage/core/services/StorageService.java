@@ -13,4 +13,5 @@ public interface StorageService<T extends StorageObject> {
 
     Mono<Void> delete(String id);
 
+    Mono<Boolean> exists(String id);
 }

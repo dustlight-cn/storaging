@@ -7,18 +7,19 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import plus.auth.resources.AuthPrincipalUtil;
 import plus.auth.resources.core.AuthPrincipal;
+import plus.storage.core.ErrorEnum;
 import plus.storage.core.entities.BaseStorageObject;
 import plus.storage.core.entities.StorageObject;
 import plus.storage.core.services.UrlStorageService;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/v1/objects")
@@ -57,8 +58,23 @@ public class ObjectController {
     public Mono<Void> putObject(@PathVariable(name = "id") String id,
                                 @RequestBody BaseStorageObject object,
                                 AbstractOAuth2TokenAuthenticationToken principal) {
-        object.setId(id);
-        return storageService.put(object);
+
+        return storageService.exists(id)
+                .flatMap(flag -> {
+                    if((Boolean)flag != true)
+                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
+
+                    BaseStorageObject tmp = new BaseStorageObject();
+                    tmp.setId(id);
+                    tmp.setName(object.getName());
+                    tmp.setDescription(object.getDescription());
+                    tmp.setAdditional(object.getAdditional());
+                    tmp.setCanRead(object.getCanRead());
+                    tmp.setCanWrite(object.getCanWrite());
+                    tmp.setOwner(object.getOwner());
+
+                    return storageService.put(tmp);
+                });
     }
 
     @DeleteMapping("/{id}")
@@ -71,13 +87,17 @@ public class ObjectController {
     public Mono<Void> getObjectData(@PathVariable(name = "id") String id,
                                     ServerWebExchange exchange,
                                     AbstractOAuth2TokenAuthenticationToken principal) {
-        return Mono.just(storageService.generateGetUrl(id, 1000 * 60 * 5))
-                .flatMap(s -> {
 
-                    Logger.getGlobal().info(s);
-                    exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                    exchange.getResponse().getHeaders().add("Location", s);
-                    return Mono.empty();
+        return storageService.exists(id)
+                .flatMap(flag -> {
+                    if ((Boolean) flag != true)
+                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
+                    return storageService.generateGetUrl(id, 1000 * 60 * 5)
+                            .flatMap(s -> {
+                                exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
+                                exchange.getResponse().getHeaders().add("Location", s.toString());
+                                return Mono.empty();
+                            });
                 });
     }
 
@@ -86,28 +106,40 @@ public class ObjectController {
             description = "",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
                     content = @Content(
-                            mediaType = "application/octet-stream",
-                            schema = @Schema(type = "string", format = "binary")
+                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                            schema = @Schema(type = "file", format = "binary")
                     )
             ))
     public Mono<Void> putObjectData(@PathVariable(name = "id") String id,
+                                    @RequestHeader(name = "Content-Disposition", defaultValue = "attachment") String contentDisposition,
                                     ServerWebExchange exchange,
                                     AbstractOAuth2TokenAuthenticationToken principal) {
-        return Mono.just(storageService.generatePut(id, 1000 * 60 * 5))
-                .flatMap(s -> {
-                    Logger.getGlobal().info(s);
-                    exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                    exchange.getResponse().getHeaders().add("Location", s);
+        var headers = exchange.getRequest().getHeaders();
+        return storageService.exists(id)
+                .flatMap(flag -> {
+                    if ((Boolean) flag != true)
+                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
+                    return storageService.generatePut(id, 1000 * 60 * 5, headers)
+                            .flatMap(s -> {
+                                exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
+                                exchange.getResponse().getHeaders().add("Location", s.toString());
 
-                    BaseStorageObject origin = new BaseStorageObject();
+                                BaseStorageObject origin = new BaseStorageObject();
+                                origin.setId(id);
 
-                    Logger.getGlobal().info(exchange.getRequest().getHeaders().toString());
-                    origin.setSize(exchange.getRequest().getHeaders().getContentLength());
-                    origin.setType(exchange.getRequest().getHeaders().getContentType().getType());
-                    origin.setName(exchange.getRequest().getHeaders().getContentDisposition().getFilename());
-                    origin.setDescription(exchange.getRequest().getHeaders().getContentDisposition().toString());
+                                if (headers != null) {
+                                    origin.setSize(headers.getContentLength());
+                                    var contentType = headers.getContentType();
+                                    if (contentType != null) {
+                                        origin.setType(contentType.toString());
+                                    } else {
+                                        origin.setType("");
+                                    }
+                                }
 
-                    return storageService.put(origin);
+
+                                return storageService.put(origin);
+                            });
                 });
     }
 }

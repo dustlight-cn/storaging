@@ -1,10 +1,14 @@
 package plus.storage.core.services;
 
+
+import org.springframework.http.HttpHeaders;
+import reactor.core.publisher.Mono;
+
 public interface ObjectUrlGenerator {
 
-    String generateGetUrl(String id, long expiresIn);
+    Mono<String> generateGetUrl(String id, long expiresIn);
 
-    String generatePut(String id, long expiresIn);
+    Mono<String> generatePut(String id, long expiresIn, HttpHeaders httpHeaders);
 
-    void deleteNow(String id);
+    Mono<Void> delete(String id);
 }
