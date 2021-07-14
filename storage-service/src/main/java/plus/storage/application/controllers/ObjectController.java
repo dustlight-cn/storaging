@@ -156,7 +156,7 @@ public class ObjectController {
     @Operation(summary = "查找对象", description = "查找对象的数据。")
     @GetMapping("")
     public Mono<QueryResult<StorageObject>> findObjects(@RequestParam(name = "q", required = false) String keywords,
-                                                        @RequestParam(name = "page", defaultValue = "1") int page,
+                                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                                         AbstractOAuth2TokenAuthenticationToken principal) {
 
