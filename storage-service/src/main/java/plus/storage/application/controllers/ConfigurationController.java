@@ -19,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/v1/configs")
 @SecurityRequirement(name = "auth")
 @Tag(name = "Configurations",description = "用户配置服务，提供 Key-Value 的存储。")
+@CrossOrigin
 public class ConfigurationController {
 
     @Autowired

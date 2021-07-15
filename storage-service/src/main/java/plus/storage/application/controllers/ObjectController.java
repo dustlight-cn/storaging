@@ -26,6 +26,7 @@ import java.util.Arrays;
 @RequestMapping("/v1/objects")
 @SecurityRequirement(name = "auth")
 @Tag(name = "Objects", description = "对象存储服务，提供 Key-Value 的对象存储。")
+@CrossOrigin
 public class ObjectController {
 
     @Autowired
