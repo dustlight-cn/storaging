@@ -33,7 +33,7 @@ public class ConfigurationController {
                                                 AbstractOAuth2TokenAuthenticationToken principal) {
         AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
         return configurationService.getConfiguration(authPrincipal.getClientId(),
-                authPrincipal.getUid().toString(),
+                authPrincipal.getUidString(),
                 name);
     }
 
@@ -44,7 +44,7 @@ public class ConfigurationController {
                                        AbstractOAuth2TokenAuthenticationToken principal) {
         AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
         return configurationService.setConfiguration(authPrincipal.getClientId(),
-                authPrincipal.getUid().toString(),
+                authPrincipal.getUidString(),
                 name,
                 config);
     }

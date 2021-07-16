@@ -48,9 +48,9 @@ public class ObjectController {
         origin.setName(object.getName());
         origin.setDescription(object.getDescription());
         if (origin.getOwner() == null) {
-            origin.setOwner(Arrays.asList(authPrincipal.getUid().toString()));
+            origin.setOwner(Arrays.asList(authPrincipal.getUidString()));
         } else {
-            origin.getOwner().add(authPrincipal.getUid().toString());
+            origin.getOwner().add(authPrincipal.getUidString());
         }
         return storageService.create(origin);
     }
@@ -162,6 +162,6 @@ public class ObjectController {
                                                         AbstractOAuth2TokenAuthenticationToken principal) {
 
         AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
-        return storageService.find(keywords, page, size, authPrincipal.getClientId(), authPrincipal.getUid().toString());
+        return storageService.find(keywords, page, size, authPrincipal.getClientId(), authPrincipal.getUidString());
     }
 }
