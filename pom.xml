@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <groupId>plus.storage</groupId>
     <artifactId>storage-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <description>PLUS 对象存储服务</description>
 
     <properties>
@@ -23,12 +23,14 @@
         <spring-boot.version>2.5.2</spring-boot.version>
         <springdoc.version>1.5.9</springdoc.version>
 
-        <auth.version>1.1.0-alpha-SNAPSHOT</auth.version>
-        <storage.version>0.0.4</storage.version>
+        <auth.version>1.1.0-alpha-1-SNAPSHOT</auth.version>
+        <storage.version>0.0.5</storage.version>
     </properties>
 
     <modules>
         <module>storage-core</module>
+        <module>storage-cloud</module>
+        <module>storage-mongodb</module>
         <module>storage-service</module>
     </modules>
 
@@ -41,11 +43,28 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>plus.storage</groupId>
                 <artifactId>storage-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>plus.storage</groupId>
+                <artifactId>storage-mongodb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>plus.storage</groupId>
+                <artifactId>storage-cloud</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>plus.storage</groupId>
+                <artifactId>storage-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>plus.auth</groupId>
                 <artifactId>auth-common</artifactId>
@@ -62,8 +81,10 @@
 
             <dependency>
                 <groupId>cn.dustlight.storage</groupId>
-                <artifactId>storage-parent</artifactId>
+                <artifactId>storage</artifactId>
                 <version>${storage.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -73,16 +94,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <pluginManagement>

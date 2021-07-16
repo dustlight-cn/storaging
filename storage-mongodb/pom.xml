@@ -8,27 +8,44 @@
         <version>0.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>storage-core</artifactId>
-    <description>PLUS 对象存储服务 - 核心模块</description>
-
-    <properties>
-        <java.version>11</java.version>
-    </properties>
+    <artifactId>storage-mongodb</artifactId>
+    <description>PLUS 对象存储服务 - MongoDB 实现模块</description>
 
     <dependencies>
+
+        <dependency>
+            <groupId>plus.storage</groupId>
+            <artifactId>storage-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
-            <groupId>plus.auth</groupId>
-            <artifactId>auth-entities</artifactId>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
