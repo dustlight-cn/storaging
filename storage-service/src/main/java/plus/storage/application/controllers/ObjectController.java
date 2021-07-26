@@ -47,11 +47,12 @@ public class ObjectController {
         origin.setCanWrite(object.getCanWrite());
         origin.setName(object.getName());
         origin.setDescription(object.getDescription());
-        if (origin.getOwner() == null) {
-            origin.setOwner(Arrays.asList(authPrincipal.getUidString()));
-        } else {
-            origin.getOwner().add(authPrincipal.getUidString());
-        }
+        if (authPrincipal.getUid() != null)
+            if (origin.getOwner() == null) {
+                origin.setOwner(Arrays.asList(authPrincipal.getUidString()));
+            } else {
+                origin.getOwner().add(authPrincipal.getUidString());
+            }
         return storageService.create(origin);
     }
 
@@ -70,7 +71,7 @@ public class ObjectController {
 
         return storageService.exists(id)
                 .flatMap(flag -> {
-                    if((Boolean)flag != true)
+                    if ((Boolean) flag != true)
                         ErrorEnum.OBJECT_NOT_FOUND.throwException();
 
                     BaseStorageObject tmp = new BaseStorageObject();
