@@ -8,9 +8,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
+import plus.auth.client.reactive.ReactiveAuthClient;
 import plus.auth.resources.AuthPrincipalUtil;
 import plus.auth.resources.core.AuthPrincipal;
 import plus.storage.core.ErrorEnum;
@@ -35,41 +36,47 @@ public class ObjectController {
     @Operation(summary = "创建对象", description = "创建一个对象。")
     @PostMapping("")
     public Mono<StorageObject> createObject(@RequestBody BaseStorageObject object,
-                                            ServerWebExchange exchange,
-                                            AbstractOAuth2TokenAuthenticationToken principal) {
-
-        AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
-
-        BaseStorageObject origin = new BaseStorageObject();
-        origin.setClientId(authPrincipal.getClientId());
-        origin.setOwner(object.getOwner());
-        origin.setCanRead(object.getCanRead());
-        origin.setCanWrite(object.getCanWrite());
-        origin.setName(object.getName());
-        origin.setDescription(object.getDescription());
-        if (authPrincipal.getUid() != null)
-            if (origin.getOwner() == null) {
-                origin.setOwner(Arrays.asList(authPrincipal.getUidString()));
-            } else {
-                origin.getOwner().add(authPrincipal.getUidString());
-            }
-        return storageService.create(origin);
+                                            @RequestParam(name = "cid", required = false) String clientId,
+                                            ReactiveAuthClient reactiveAuthClient,
+                                            AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> {
+                    BaseStorageObject origin = new BaseStorageObject();
+                    origin.setClientId(cid);
+                    origin.setOwner(object.getOwner());
+                    origin.setCanRead(object.getCanRead());
+                    origin.setCanWrite(object.getCanWrite());
+                    origin.setName(object.getName());
+                    origin.setDescription(object.getDescription());
+                    if (StringUtils.hasText(principal.getUidString()))
+                        if (origin.getOwner() == null) {
+                            origin.setOwner(Arrays.asList(principal.getUidString()));
+                        } else {
+                            origin.getOwner().add(principal.getUidString());
+                        }
+                    return storageService.create(origin);
+                });
     }
 
     @Operation(summary = "获取对象", description = "获取指定对象。")
     @GetMapping("/{id}")
     public Mono<StorageObject> getObject(@PathVariable(name = "id") String id,
-                                         AbstractOAuth2TokenAuthenticationToken principal) {
-        return storageService.get(id);
+                                         @RequestParam(name = "cid", required = false) String clientId,
+                                         ReactiveAuthClient reactiveAuthClient,
+                                         AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> storageService.get(id));
     }
 
     @Operation(summary = "更新对象", description = "更新指定对象。")
     @PutMapping("/{id}")
     public Mono<Void> putObject(@PathVariable(name = "id") String id,
                                 @RequestBody BaseStorageObject object,
-                                AbstractOAuth2TokenAuthenticationToken principal) {
-
-        return storageService.exists(id)
+                                @RequestParam(name = "cid", required = false) String clientId,
+                                ReactiveAuthClient reactiveAuthClient,
+                                AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> storageService.exists(id))
                 .flatMap(flag -> {
                     if ((Boolean) flag != true)
                         ErrorEnum.OBJECT_NOT_FOUND.throwException();
@@ -90,17 +97,22 @@ public class ObjectController {
     @Operation(summary = "删除对象", description = "删除指定对象。")
     @DeleteMapping("/{id}")
     public Mono<Void> deleteObject(@PathVariable(name = "id") String id,
-                                   AbstractOAuth2TokenAuthenticationToken principal) {
-        return storageService.delete(id);
+                                   @RequestParam(name = "cid", required = false) String clientId,
+                                   ReactiveAuthClient reactiveAuthClient,
+                                   AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> storageService.delete(id));
     }
 
     @Operation(summary = "获取对象数据", description = "获取对象的数据。")
     @GetMapping("/{id}/data")
     public Mono<Void> getObjectData(@PathVariable(name = "id") String id,
                                     ServerWebExchange exchange,
-                                    AbstractOAuth2TokenAuthenticationToken principal) {
-
-        return storageService.exists(id)
+                                    @RequestParam(name = "cid", required = false) String clientId,
+                                    ReactiveAuthClient reactiveAuthClient,
+                                    AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> storageService.exists(id))
                 .flatMap(flag -> {
                     if ((Boolean) flag != true)
                         ErrorEnum.OBJECT_NOT_FOUND.throwException();
@@ -125,32 +137,37 @@ public class ObjectController {
     public Mono<Void> putObjectData(@PathVariable(name = "id") String id,
                                     @RequestHeader(name = "Content-Disposition", defaultValue = "attachment") String contentDisposition,
                                     ServerWebExchange exchange,
-                                    AbstractOAuth2TokenAuthenticationToken principal) {
-        var headers = exchange.getRequest().getHeaders();
-        return storageService.exists(id)
-                .flatMap(flag -> {
-                    if ((Boolean) flag != true)
-                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
-                    return storageService.generatePut(id, 1000 * 60 * 5, headers)
-                            .flatMap(s -> {
-                                exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                                exchange.getResponse().getHeaders().add("Location", s.toString());
+                                    @RequestParam(name = "cid", required = false) String clientId,
+                                    ReactiveAuthClient reactiveAuthClient,
+                                    AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> {
+                    var headers = exchange.getRequest().getHeaders();
+                    return storageService.exists(id)
+                            .flatMap(flag -> {
+                                if ((Boolean) flag != true)
+                                    ErrorEnum.OBJECT_NOT_FOUND.throwException();
+                                return storageService.generatePut(id, 1000 * 60 * 5, headers)
+                                        .flatMap(s -> {
+                                            exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
+                                            exchange.getResponse().getHeaders().add("Location", s.toString());
 
-                                BaseStorageObject origin = new BaseStorageObject();
-                                origin.setId(id);
+                                            BaseStorageObject origin = new BaseStorageObject();
+                                            origin.setId(id);
 
-                                if (headers != null) {
-                                    origin.setSize(headers.getContentLength());
-                                    var contentType = headers.getContentType();
-                                    if (contentType != null) {
-                                        origin.setType(contentType.toString());
-                                    } else {
-                                        origin.setType("");
-                                    }
-                                }
+                                            if (headers != null) {
+                                                origin.setSize(headers.getContentLength());
+                                                var contentType = headers.getContentType();
+                                                if (contentType != null) {
+                                                    origin.setType(contentType.toString());
+                                                } else {
+                                                    origin.setType("");
+                                                }
+                                            }
 
 
-                                return storageService.put(origin);
+                                            return storageService.put(origin);
+                                        });
                             });
                 });
     }
@@ -160,9 +177,10 @@ public class ObjectController {
     public Mono<QueryResult<StorageObject>> findObjects(@RequestParam(name = "q", required = false) String keywords,
                                                         @RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "size", defaultValue = "10") int size,
-                                                        AbstractOAuth2TokenAuthenticationToken principal) {
-
-        AuthPrincipal authPrincipal = AuthPrincipalUtil.getAuthPrincipal(principal);
-        return storageService.find(keywords, page, size, authPrincipal.getClientId(), authPrincipal.getUidString());
+                                                        @RequestParam(name = "cid", required = false) String clientId,
+                                                        ReactiveAuthClient reactiveAuthClient,
+                                                        AuthPrincipal principal) {
+        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> storageService.find(keywords, page, size, cid, principal.getUidString()));
     }
 }
