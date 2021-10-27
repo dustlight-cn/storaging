@@ -42,10 +42,11 @@ const ConfigurationsApiAxiosParamCreator = function (configuration) {
          * 获取应用的用户的配置。
          * @summary 获取用户配置
          * @param {string} name
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getConfiguration: (name, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        getConfiguration: (name, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'name' is not null or undefined
             common_1.assertParamExists('getConfiguration', 'name', name);
             const localVarPath = `/v1/configs/{name}`
@@ -62,6 +63,9 @@ const ConfigurationsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options.headers);
@@ -75,10 +79,11 @@ const ConfigurationsApiAxiosParamCreator = function (configuration) {
          * @summary 设置用户配置
          * @param {string} name
          * @param {{ [key: string]: object; }} requestBody
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setConfiguration: (name, requestBody, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        setConfiguration: (name, requestBody, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'name' is not null or undefined
             common_1.assertParamExists('setConfiguration', 'name', name);
             // verify required parameter 'requestBody' is not null or undefined
@@ -97,6 +102,9 @@ const ConfigurationsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             localVarHeaderParameter['Content-Type'] = 'application/json';
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -121,12 +129,13 @@ const ConfigurationsApiFp = function (configuration) {
          * 获取应用的用户的配置。
          * @summary 获取用户配置
          * @param {string} name
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getConfiguration(name, options) {
+        getConfiguration(name, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.getConfiguration(name, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.getConfiguration(name, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -135,12 +144,13 @@ const ConfigurationsApiFp = function (configuration) {
          * @summary 设置用户配置
          * @param {string} name
          * @param {{ [key: string]: object; }} requestBody
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setConfiguration(name, requestBody, options) {
+        setConfiguration(name, requestBody, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.setConfiguration(name, requestBody, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.setConfiguration(name, requestBody, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -158,22 +168,24 @@ const ConfigurationsApiFactory = function (configuration, basePath, axios) {
          * 获取应用的用户的配置。
          * @summary 获取用户配置
          * @param {string} name
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getConfiguration(name, options) {
-            return localVarFp.getConfiguration(name, options).then((request) => request(axios, basePath));
+        getConfiguration(name, cid, options) {
+            return localVarFp.getConfiguration(name, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 新增或更新用户配置。
          * @summary 设置用户配置
          * @param {string} name
          * @param {{ [key: string]: object; }} requestBody
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setConfiguration(name, requestBody, options) {
-            return localVarFp.setConfiguration(name, requestBody, options).then((request) => request(axios, basePath));
+        setConfiguration(name, requestBody, cid, options) {
+            return localVarFp.setConfiguration(name, requestBody, cid, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -189,24 +201,26 @@ class ConfigurationsApi extends base_1.BaseAPI {
      * 获取应用的用户的配置。
      * @summary 获取用户配置
      * @param {string} name
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConfigurationsApi
      */
-    getConfiguration(name, options) {
-        return exports.ConfigurationsApiFp(this.configuration).getConfiguration(name, options).then((request) => request(this.axios, this.basePath));
+    getConfiguration(name, cid, options) {
+        return exports.ConfigurationsApiFp(this.configuration).getConfiguration(name, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 新增或更新用户配置。
      * @summary 设置用户配置
      * @param {string} name
      * @param {{ [key: string]: object; }} requestBody
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConfigurationsApi
      */
-    setConfiguration(name, requestBody, options) {
-        return exports.ConfigurationsApiFp(this.configuration).setConfiguration(name, requestBody, options).then((request) => request(this.axios, this.basePath));
+    setConfiguration(name, requestBody, cid, options) {
+        return exports.ConfigurationsApiFp(this.configuration).setConfiguration(name, requestBody, cid, options).then((request) => request(this.axios, this.basePath));
     }
 }
 exports.ConfigurationsApi = ConfigurationsApi;
@@ -220,10 +234,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * 创建一个对象。
          * @summary 创建对象
          * @param {BaseStorageObject} baseStorageObject
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createObject: (baseStorageObject, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        createObject: (baseStorageObject, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'baseStorageObject' is not null or undefined
             common_1.assertParamExists('createObject', 'baseStorageObject', baseStorageObject);
             const localVarPath = `/v1/objects`;
@@ -239,6 +254,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             localVarHeaderParameter['Content-Type'] = 'application/json';
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -253,10 +271,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * 删除指定对象。
          * @summary 删除对象
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteObject: (id, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        deleteObject: (id, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'id' is not null or undefined
             common_1.assertParamExists('deleteObject', 'id', id);
             const localVarPath = `/v1/objects/{id}`
@@ -273,6 +292,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options.headers);
@@ -287,10 +309,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * @param {string} [q]
          * @param {number} [page]
          * @param {number} [size]
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        findObjects: (q, page, size, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        findObjects: (q, page, size, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             const localVarPath = `/v1/objects`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
@@ -313,6 +336,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             if (size !== undefined) {
                 localVarQueryParameter['size'] = size;
             }
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options.headers);
@@ -325,10 +351,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * 获取指定对象。
          * @summary 获取对象
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getObject: (id, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        getObject: (id, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'id' is not null or undefined
             common_1.assertParamExists('getObject', 'id', id);
             const localVarPath = `/v1/objects/{id}`
@@ -345,6 +372,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options.headers);
@@ -357,10 +387,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * 获取对象的数据。
          * @summary 获取对象数据
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getObjectData: (id, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        getObjectData: (id, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'id' is not null or undefined
             common_1.assertParamExists('getObjectData', 'id', id);
             const localVarPath = `/v1/objects/{id}/data`
@@ -377,6 +408,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), options.headers);
@@ -390,10 +424,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * @summary 更新对象
          * @param {string} id
          * @param {BaseStorageObject} baseStorageObject
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putObject: (id, baseStorageObject, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        putObject: (id, baseStorageObject, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'id' is not null or undefined
             common_1.assertParamExists('putObject', 'id', id);
             // verify required parameter 'baseStorageObject' is not null or undefined
@@ -412,6 +447,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             localVarHeaderParameter['Content-Type'] = 'application/json';
             common_1.setSearchParams(localVarUrlObj, localVarQueryParameter, options.query);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -428,10 +466,11 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
          * @param {string} id
          * @param {any} body
          * @param {string} [contentDisposition]
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putObjectData: (id, body, contentDisposition, options = {}) => __awaiter(this, void 0, void 0, function* () {
+        putObjectData: (id, body, contentDisposition, cid, options = {}) => __awaiter(this, void 0, void 0, function* () {
             // verify required parameter 'id' is not null or undefined
             common_1.assertParamExists('putObjectData', 'id', id);
             // verify required parameter 'body' is not null or undefined
@@ -450,6 +489,9 @@ const ObjectsApiAxiosParamCreator = function (configuration) {
             // authentication auth required
             // oauth required
             yield common_1.setOAuthToObject(localVarHeaderParameter, "auth", [], configuration);
+            if (cid !== undefined) {
+                localVarQueryParameter['cid'] = cid;
+            }
             if (contentDisposition !== undefined && contentDisposition !== null) {
                 localVarHeaderParameter['Content-Disposition'] = String(contentDisposition);
             }
@@ -477,12 +519,13 @@ const ObjectsApiFp = function (configuration) {
          * 创建一个对象。
          * @summary 创建对象
          * @param {BaseStorageObject} baseStorageObject
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createObject(baseStorageObject, options) {
+        createObject(baseStorageObject, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.createObject(baseStorageObject, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.createObject(baseStorageObject, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -490,12 +533,13 @@ const ObjectsApiFp = function (configuration) {
          * 删除指定对象。
          * @summary 删除对象
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteObject(id, options) {
+        deleteObject(id, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.deleteObject(id, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.deleteObject(id, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -505,12 +549,13 @@ const ObjectsApiFp = function (configuration) {
          * @param {string} [q]
          * @param {number} [page]
          * @param {number} [size]
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        findObjects(q, page, size, options) {
+        findObjects(q, page, size, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.findObjects(q, page, size, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.findObjects(q, page, size, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -518,12 +563,13 @@ const ObjectsApiFp = function (configuration) {
          * 获取指定对象。
          * @summary 获取对象
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getObject(id, options) {
+        getObject(id, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.getObject(id, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.getObject(id, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -531,12 +577,13 @@ const ObjectsApiFp = function (configuration) {
          * 获取对象的数据。
          * @summary 获取对象数据
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getObjectData(id, options) {
+        getObjectData(id, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.getObjectData(id, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.getObjectData(id, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -545,12 +592,13 @@ const ObjectsApiFp = function (configuration) {
          * @summary 更新对象
          * @param {string} id
          * @param {BaseStorageObject} baseStorageObject
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putObject(id, baseStorageObject, options) {
+        putObject(id, baseStorageObject, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.putObject(id, baseStorageObject, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.putObject(id, baseStorageObject, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -560,12 +608,13 @@ const ObjectsApiFp = function (configuration) {
          * @param {string} id
          * @param {any} body
          * @param {string} [contentDisposition]
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putObjectData(id, body, contentDisposition, options) {
+        putObjectData(id, body, contentDisposition, cid, options) {
             return __awaiter(this, void 0, void 0, function* () {
-                const localVarAxiosArgs = yield localVarAxiosParamCreator.putObjectData(id, body, contentDisposition, options);
+                const localVarAxiosArgs = yield localVarAxiosParamCreator.putObjectData(id, body, contentDisposition, cid, options);
                 return common_1.createRequestFunction(localVarAxiosArgs, axios_1.default, base_1.BASE_PATH, configuration);
             });
         },
@@ -583,21 +632,23 @@ const ObjectsApiFactory = function (configuration, basePath, axios) {
          * 创建一个对象。
          * @summary 创建对象
          * @param {BaseStorageObject} baseStorageObject
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createObject(baseStorageObject, options) {
-            return localVarFp.createObject(baseStorageObject, options).then((request) => request(axios, basePath));
+        createObject(baseStorageObject, cid, options) {
+            return localVarFp.createObject(baseStorageObject, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 删除指定对象。
          * @summary 删除对象
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteObject(id, options) {
-            return localVarFp.deleteObject(id, options).then((request) => request(axios, basePath));
+        deleteObject(id, cid, options) {
+            return localVarFp.deleteObject(id, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 查找对象的数据。
@@ -605,42 +656,46 @@ const ObjectsApiFactory = function (configuration, basePath, axios) {
          * @param {string} [q]
          * @param {number} [page]
          * @param {number} [size]
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        findObjects(q, page, size, options) {
-            return localVarFp.findObjects(q, page, size, options).then((request) => request(axios, basePath));
+        findObjects(q, page, size, cid, options) {
+            return localVarFp.findObjects(q, page, size, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 获取指定对象。
          * @summary 获取对象
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getObject(id, options) {
-            return localVarFp.getObject(id, options).then((request) => request(axios, basePath));
+        getObject(id, cid, options) {
+            return localVarFp.getObject(id, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 获取对象的数据。
          * @summary 获取对象数据
          * @param {string} id
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getObjectData(id, options) {
-            return localVarFp.getObjectData(id, options).then((request) => request(axios, basePath));
+        getObjectData(id, cid, options) {
+            return localVarFp.getObjectData(id, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 更新指定对象。
          * @summary 更新对象
          * @param {string} id
          * @param {BaseStorageObject} baseStorageObject
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putObject(id, baseStorageObject, options) {
-            return localVarFp.putObject(id, baseStorageObject, options).then((request) => request(axios, basePath));
+        putObject(id, baseStorageObject, cid, options) {
+            return localVarFp.putObject(id, baseStorageObject, cid, options).then((request) => request(axios, basePath));
         },
         /**
          * 更新对象的数据。
@@ -648,11 +703,12 @@ const ObjectsApiFactory = function (configuration, basePath, axios) {
          * @param {string} id
          * @param {any} body
          * @param {string} [contentDisposition]
+         * @param {string} [cid]
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putObjectData(id, body, contentDisposition, options) {
-            return localVarFp.putObjectData(id, body, contentDisposition, options).then((request) => request(axios, basePath));
+        putObjectData(id, body, contentDisposition, cid, options) {
+            return localVarFp.putObjectData(id, body, contentDisposition, cid, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -668,23 +724,25 @@ class ObjectsApi extends base_1.BaseAPI {
      * 创建一个对象。
      * @summary 创建对象
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    createObject(baseStorageObject, options) {
-        return exports.ObjectsApiFp(this.configuration).createObject(baseStorageObject, options).then((request) => request(this.axios, this.basePath));
+    createObject(baseStorageObject, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).createObject(baseStorageObject, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 删除指定对象。
      * @summary 删除对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    deleteObject(id, options) {
-        return exports.ObjectsApiFp(this.configuration).deleteObject(id, options).then((request) => request(this.axios, this.basePath));
+    deleteObject(id, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).deleteObject(id, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 查找对象的数据。
@@ -692,46 +750,50 @@ class ObjectsApi extends base_1.BaseAPI {
      * @param {string} [q]
      * @param {number} [page]
      * @param {number} [size]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    findObjects(q, page, size, options) {
-        return exports.ObjectsApiFp(this.configuration).findObjects(q, page, size, options).then((request) => request(this.axios, this.basePath));
+    findObjects(q, page, size, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).findObjects(q, page, size, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 获取指定对象。
      * @summary 获取对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    getObject(id, options) {
-        return exports.ObjectsApiFp(this.configuration).getObject(id, options).then((request) => request(this.axios, this.basePath));
+    getObject(id, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).getObject(id, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 获取对象的数据。
      * @summary 获取对象数据
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    getObjectData(id, options) {
-        return exports.ObjectsApiFp(this.configuration).getObjectData(id, options).then((request) => request(this.axios, this.basePath));
+    getObjectData(id, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).getObjectData(id, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 更新指定对象。
      * @summary 更新对象
      * @param {string} id
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    putObject(id, baseStorageObject, options) {
-        return exports.ObjectsApiFp(this.configuration).putObject(id, baseStorageObject, options).then((request) => request(this.axios, this.basePath));
+    putObject(id, baseStorageObject, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).putObject(id, baseStorageObject, cid, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 更新对象的数据。
@@ -739,12 +801,13 @@ class ObjectsApi extends base_1.BaseAPI {
      * @param {string} id
      * @param {any} body
      * @param {string} [contentDisposition]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    putObjectData(id, body, contentDisposition, options) {
-        return exports.ObjectsApiFp(this.configuration).putObjectData(id, body, contentDisposition, options).then((request) => request(this.axios, this.basePath));
+    putObjectData(id, body, contentDisposition, cid, options) {
+        return exports.ObjectsApiFp(this.configuration).putObjectData(id, body, contentDisposition, cid, options).then((request) => request(this.axios, this.basePath));
     }
 }
 exports.ObjectsApi = ObjectsApi;

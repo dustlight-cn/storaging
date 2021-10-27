@@ -150,18 +150,18 @@ export interface StorageObject {
     description?: string;
     /**
      *
+     * @type {string}
+     * @memberof StorageObject
+     */
+    clientId?: string;
+    /**
+     *
      * @type {{ [key: string]: object; }}
      * @memberof StorageObject
      */
     additional?: {
         [key: string]: object;
     };
-    /**
-     *
-     * @type {string}
-     * @memberof StorageObject
-     */
-    clientId?: string;
     /**
      *
      * @type {Array<string>}
@@ -173,13 +173,13 @@ export interface StorageObject {
      * @type {Array<string>}
      * @memberof StorageObject
      */
-    canWrite?: Array<string>;
+    canRead?: Array<string>;
     /**
      *
      * @type {Array<string>}
      * @memberof StorageObject
      */
-    canRead?: Array<string>;
+    canWrite?: Array<string>;
     /**
      *
      * @type {string}
@@ -202,21 +202,23 @@ export declare const ConfigurationsApiAxiosParamCreator: (configuration?: Config
      * 获取应用的用户的配置。
      * @summary 获取用户配置
      * @param {string} name
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getConfiguration: (name: string, options?: any) => Promise<RequestArgs>;
+    getConfiguration: (name: string, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 新增或更新用户配置。
      * @summary 设置用户配置
      * @param {string} name
      * @param {{ [key: string]: object; }} requestBody
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setConfiguration: (name: string, requestBody: {
         [key: string]: object;
-    }, options?: any) => Promise<RequestArgs>;
+    }, cid?: string, options?: any) => Promise<RequestArgs>;
 };
 /**
  * ConfigurationsApi - functional programming interface
@@ -227,10 +229,11 @@ export declare const ConfigurationsApiFp: (configuration?: Configuration) => {
      * 获取应用的用户的配置。
      * @summary 获取用户配置
      * @param {string} name
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getConfiguration(name: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{
+    getConfiguration(name: string, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{
         [key: string]: object;
     }>>;
     /**
@@ -238,12 +241,13 @@ export declare const ConfigurationsApiFp: (configuration?: Configuration) => {
      * @summary 设置用户配置
      * @param {string} name
      * @param {{ [key: string]: object; }} requestBody
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setConfiguration(name: string, requestBody: {
         [key: string]: object;
-    }, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
+    }, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
 };
 /**
  * ConfigurationsApi - factory interface
@@ -254,10 +258,11 @@ export declare const ConfigurationsApiFactory: (configuration?: Configuration, b
      * 获取应用的用户的配置。
      * @summary 获取用户配置
      * @param {string} name
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getConfiguration(name: string, options?: any): AxiosPromise<{
+    getConfiguration(name: string, cid?: string, options?: any): AxiosPromise<{
         [key: string]: object;
     }>;
     /**
@@ -265,12 +270,13 @@ export declare const ConfigurationsApiFactory: (configuration?: Configuration, b
      * @summary 设置用户配置
      * @param {string} name
      * @param {{ [key: string]: object; }} requestBody
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     setConfiguration(name: string, requestBody: {
         [key: string]: object;
-    }, options?: any): AxiosPromise<void>;
+    }, cid?: string, options?: any): AxiosPromise<void>;
 };
 /**
  * ConfigurationsApi - object-oriented interface
@@ -283,11 +289,12 @@ export declare class ConfigurationsApi extends BaseAPI {
      * 获取应用的用户的配置。
      * @summary 获取用户配置
      * @param {string} name
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConfigurationsApi
      */
-    getConfiguration(name: string, options?: any): Promise<import("axios").AxiosResponse<{
+    getConfiguration(name: string, cid?: string, options?: any): Promise<import("axios").AxiosResponse<{
         [key: string]: object;
     }>>;
     /**
@@ -295,13 +302,14 @@ export declare class ConfigurationsApi extends BaseAPI {
      * @summary 设置用户配置
      * @param {string} name
      * @param {{ [key: string]: object; }} requestBody
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ConfigurationsApi
      */
     setConfiguration(name: string, requestBody: {
         [key: string]: object;
-    }, options?: any): Promise<import("axios").AxiosResponse<void>>;
+    }, cid?: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
 }
 /**
  * ObjectsApi - axios parameter creator
@@ -312,63 +320,70 @@ export declare const ObjectsApiAxiosParamCreator: (configuration?: Configuration
      * 创建一个对象。
      * @summary 创建对象
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createObject: (baseStorageObject: BaseStorageObject, options?: any) => Promise<RequestArgs>;
+    createObject: (baseStorageObject: BaseStorageObject, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 删除指定对象。
      * @summary 删除对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteObject: (id: string, options?: any) => Promise<RequestArgs>;
+    deleteObject: (id: string, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 查找对象的数据。
      * @summary 查找对象
      * @param {string} [q]
      * @param {number} [page]
      * @param {number} [size]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    findObjects: (q?: string, page?: number, size?: number, options?: any) => Promise<RequestArgs>;
+    findObjects: (q?: string, page?: number, size?: number, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 获取指定对象。
      * @summary 获取对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getObject: (id: string, options?: any) => Promise<RequestArgs>;
+    getObject: (id: string, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 获取对象的数据。
      * @summary 获取对象数据
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getObjectData: (id: string, options?: any) => Promise<RequestArgs>;
+    getObjectData: (id: string, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 更新指定对象。
      * @summary 更新对象
      * @param {string} id
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putObject: (id: string, baseStorageObject: BaseStorageObject, options?: any) => Promise<RequestArgs>;
+    putObject: (id: string, baseStorageObject: BaseStorageObject, cid?: string, options?: any) => Promise<RequestArgs>;
     /**
      * 更新对象的数据。
      * @summary 更新对象数据
      * @param {string} id
      * @param {any} body
      * @param {string} [contentDisposition]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putObjectData: (id: string, body: any, contentDisposition?: string, options?: any) => Promise<RequestArgs>;
+    putObjectData: (id: string, body: any, contentDisposition?: string, cid?: string, options?: any) => Promise<RequestArgs>;
 };
 /**
  * ObjectsApi - functional programming interface
@@ -379,63 +394,70 @@ export declare const ObjectsApiFp: (configuration?: Configuration) => {
      * 创建一个对象。
      * @summary 创建对象
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createObject(baseStorageObject: BaseStorageObject, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorageObject>>;
+    createObject(baseStorageObject: BaseStorageObject, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorageObject>>;
     /**
      * 删除指定对象。
      * @summary 删除对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteObject(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
+    deleteObject(id: string, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
     /**
      * 查找对象的数据。
      * @summary 查找对象
      * @param {string} [q]
      * @param {number} [page]
      * @param {number} [size]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    findObjects(q?: string, page?: number, size?: number, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueryResultStorageObject>>;
+    findObjects(q?: string, page?: number, size?: number, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QueryResultStorageObject>>;
     /**
      * 获取指定对象。
      * @summary 获取对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getObject(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorageObject>>;
+    getObject(id: string, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorageObject>>;
     /**
      * 获取对象的数据。
      * @summary 获取对象数据
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getObjectData(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
+    getObjectData(id: string, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
     /**
      * 更新指定对象。
      * @summary 更新对象
      * @param {string} id
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putObject(id: string, baseStorageObject: BaseStorageObject, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
+    putObject(id: string, baseStorageObject: BaseStorageObject, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
     /**
      * 更新对象的数据。
      * @summary 更新对象数据
      * @param {string} id
      * @param {any} body
      * @param {string} [contentDisposition]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putObjectData(id: string, body: any, contentDisposition?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
+    putObjectData(id: string, body: any, contentDisposition?: string, cid?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>>;
 };
 /**
  * ObjectsApi - factory interface
@@ -446,63 +468,70 @@ export declare const ObjectsApiFactory: (configuration?: Configuration, basePath
      * 创建一个对象。
      * @summary 创建对象
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createObject(baseStorageObject: BaseStorageObject, options?: any): AxiosPromise<StorageObject>;
+    createObject(baseStorageObject: BaseStorageObject, cid?: string, options?: any): AxiosPromise<StorageObject>;
     /**
      * 删除指定对象。
      * @summary 删除对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteObject(id: string, options?: any): AxiosPromise<void>;
+    deleteObject(id: string, cid?: string, options?: any): AxiosPromise<void>;
     /**
      * 查找对象的数据。
      * @summary 查找对象
      * @param {string} [q]
      * @param {number} [page]
      * @param {number} [size]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    findObjects(q?: string, page?: number, size?: number, options?: any): AxiosPromise<QueryResultStorageObject>;
+    findObjects(q?: string, page?: number, size?: number, cid?: string, options?: any): AxiosPromise<QueryResultStorageObject>;
     /**
      * 获取指定对象。
      * @summary 获取对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getObject(id: string, options?: any): AxiosPromise<StorageObject>;
+    getObject(id: string, cid?: string, options?: any): AxiosPromise<StorageObject>;
     /**
      * 获取对象的数据。
      * @summary 获取对象数据
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getObjectData(id: string, options?: any): AxiosPromise<void>;
+    getObjectData(id: string, cid?: string, options?: any): AxiosPromise<void>;
     /**
      * 更新指定对象。
      * @summary 更新对象
      * @param {string} id
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putObject(id: string, baseStorageObject: BaseStorageObject, options?: any): AxiosPromise<void>;
+    putObject(id: string, baseStorageObject: BaseStorageObject, cid?: string, options?: any): AxiosPromise<void>;
     /**
      * 更新对象的数据。
      * @summary 更新对象数据
      * @param {string} id
      * @param {any} body
      * @param {string} [contentDisposition]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putObjectData(id: string, body: any, contentDisposition?: string, options?: any): AxiosPromise<void>;
+    putObjectData(id: string, body: any, contentDisposition?: string, cid?: string, options?: any): AxiosPromise<void>;
 };
 /**
  * ObjectsApi - object-oriented interface
@@ -515,68 +544,75 @@ export declare class ObjectsApi extends BaseAPI {
      * 创建一个对象。
      * @summary 创建对象
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    createObject(baseStorageObject: BaseStorageObject, options?: any): Promise<import("axios").AxiosResponse<StorageObject>>;
+    createObject(baseStorageObject: BaseStorageObject, cid?: string, options?: any): Promise<import("axios").AxiosResponse<StorageObject>>;
     /**
      * 删除指定对象。
      * @summary 删除对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    deleteObject(id: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
+    deleteObject(id: string, cid?: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
     /**
      * 查找对象的数据。
      * @summary 查找对象
      * @param {string} [q]
      * @param {number} [page]
      * @param {number} [size]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    findObjects(q?: string, page?: number, size?: number, options?: any): Promise<import("axios").AxiosResponse<QueryResultStorageObject>>;
+    findObjects(q?: string, page?: number, size?: number, cid?: string, options?: any): Promise<import("axios").AxiosResponse<QueryResultStorageObject>>;
     /**
      * 获取指定对象。
      * @summary 获取对象
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    getObject(id: string, options?: any): Promise<import("axios").AxiosResponse<StorageObject>>;
+    getObject(id: string, cid?: string, options?: any): Promise<import("axios").AxiosResponse<StorageObject>>;
     /**
      * 获取对象的数据。
      * @summary 获取对象数据
      * @param {string} id
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    getObjectData(id: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
+    getObjectData(id: string, cid?: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
     /**
      * 更新指定对象。
      * @summary 更新对象
      * @param {string} id
      * @param {BaseStorageObject} baseStorageObject
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    putObject(id: string, baseStorageObject: BaseStorageObject, options?: any): Promise<import("axios").AxiosResponse<void>>;
+    putObject(id: string, baseStorageObject: BaseStorageObject, cid?: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
     /**
      * 更新对象的数据。
      * @summary 更新对象数据
      * @param {string} id
      * @param {any} body
      * @param {string} [contentDisposition]
+     * @param {string} [cid]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ObjectsApi
      */
-    putObjectData(id: string, body: any, contentDisposition?: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
+    putObjectData(id: string, body: any, contentDisposition?: string, cid?: string, options?: any): Promise<import("axios").AxiosResponse<void>>;
 }
