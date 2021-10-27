@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
@@ -141,35 +142,34 @@ public class ObjectController {
                                     ReactiveAuthClient reactiveAuthClient,
                                     AuthPrincipal principal) {
         return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> {
-                    var headers = exchange.getRequest().getHeaders();
-                    return storageService.exists(id)
-                            .flatMap(flag -> {
-                                if ((Boolean) flag != true)
-                                    ErrorEnum.OBJECT_NOT_FOUND.throwException();
-                                return storageService.generatePut(id, 1000 * 60 * 5, headers)
-                                        .flatMap(s -> {
-                                            exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                                            exchange.getResponse().getHeaders().add("Location", s.toString());
+                .flatMap(cid -> storageService.exists(id)
+                        .flatMap(flag -> {
+                            if ((Boolean) flag != true)
+                                ErrorEnum.OBJECT_NOT_FOUND.throwException();
+                            var headers = exchange.getRequest().getHeaders();
+                            if (headers == null)
+                                headers = new HttpHeaders();
+                            headers.add("Content-Disposition", contentDisposition);
 
-                                            BaseStorageObject origin = new BaseStorageObject();
-                                            origin.setId(id);
+                            BaseStorageObject origin = new BaseStorageObject();
+                            origin.setId(id);
 
-                                            if (headers != null) {
-                                                origin.setSize(headers.getContentLength());
-                                                var contentType = headers.getContentType();
-                                                if (contentType != null) {
-                                                    origin.setType(contentType.toString());
-                                                } else {
-                                                    origin.setType("");
-                                                }
-                                            }
+                            origin.setSize(headers.getContentLength());
+                            var contentType = headers.getContentType();
+                            if (contentType != null) {
+                                origin.setType(contentType.toString());
+                            } else {
+                                origin.setType("");
+                            }
 
-
-                                            return storageService.put(origin);
-                                        });
-                            });
-                });
+                            return storageService.generatePut(id, 1000 * 60 * 5, headers)
+                                    .flatMap(s -> {
+                                        exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
+                                        exchange.getResponse().getHeaders().add("Location", s.toString());
+                                        return storageService.put(origin);
+                                    });
+                        })
+                );
     }
 
     @Operation(summary = "查找对象", description = "查找对象的数据。")
