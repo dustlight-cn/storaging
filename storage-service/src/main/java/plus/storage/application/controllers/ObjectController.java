@@ -146,9 +146,10 @@ public class ObjectController {
                         .flatMap(flag -> {
                             if ((Boolean) flag != true)
                                 ErrorEnum.OBJECT_NOT_FOUND.throwException();
-                            var headers = exchange.getRequest().getHeaders();
-                            if (headers == null)
-                                headers = new HttpHeaders();
+                            var oldHeader = exchange.getRequest().getHeaders();
+                            var headers = new HttpHeaders();
+                            if (oldHeader != null)
+                                headers.addAll(oldHeader);
                             headers.add("Content-Disposition", contentDisposition);
 
                             BaseStorageObject origin = new BaseStorageObject();
