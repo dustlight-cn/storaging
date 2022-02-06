@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
                 description = "提供文件、配置等对象存储服务。",
                 contact = @Contact(
                         name = "Hansin",
-                        email = "hansin@goodvoice.com"
+                        email = "hansin@dustlight.cn"
                 ),
                 version = "v1"
         )

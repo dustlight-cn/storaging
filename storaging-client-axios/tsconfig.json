@@ -5,7 +5,7 @@
     "noImplicitAny": false,
     "sourceMap": false,
     "rootDir": "./",
-    "outDir": "../storage-client-axios-js",
+    "outDir": "../storaging-client-axios-js",
     "watch": false,
     "esModuleInterop": true,
     "declaration": true

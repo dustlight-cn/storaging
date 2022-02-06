@@ -19,7 +19,7 @@
 ```shell
 npm install @plus/storage-client-axios
 ```
-查看 [ SDK 文档](storage-client-axios/README.md)
+查看 [ SDK 文档](storaging-client-axios/README.md)
 
 查看 [ API 文档](http://api.storage.wgv/doc.html)
 

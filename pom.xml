@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <groupId>cn.dustlight.storaging</groupId>
-    <artifactId>storage-parent</artifactId>
+    <artifactId>storaging-parent</artifactId>
     <version>0.0.3-SNAPSHOT</version>
     <description>对象存储服务</description>
 
@@ -28,10 +28,10 @@
     </properties>
 
     <modules>
-        <module>storage-core</module>
-        <module>storage-cloud</module>
-        <module>storage-mongodb</module>
-        <module>storage-service</module>
+        <module>storaging-core</module>
+        <module>storaging-cloud</module>
+        <module>storaging-mongodb</module>
+        <module>storaging-service</module>
     </modules>
 
     <dependencyManagement>
@@ -46,22 +46,22 @@
 
             <dependency>
                 <groupId>cn.dustlight.storaging</groupId>
-                <artifactId>storage-core</artifactId>
+                <artifactId>storaging-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.dustlight.storaging</groupId>
-                <artifactId>storage-mongodb</artifactId>
+                <artifactId>storaging-mongodb</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.dustlight.storaging</groupId>
-                <artifactId>storage-cloud</artifactId>
+                <artifactId>storaging-cloud</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.dustlight.storaging</groupId>
-                <artifactId>storage-service</artifactId>
+                <artifactId>storaging-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

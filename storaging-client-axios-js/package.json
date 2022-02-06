@@ -1,5 +1,5 @@
 {
-  "name": "@plus/storage-client-axios",
+  "name": "@dustlight/storaging-client-axios-js",
   "version": "0.0.3-alpha",
   "description": "Client SDK for Storage-Service",
   "main": "index.ts",
@@ -9,5 +9,5 @@
   "dependencies": {
     "axios": "~0.21.1"
   },
-  "author": "Hansin <hansin@goodvoice.com>"
+  "author": "Hansin1997 <hansin@dustlight.cn>"
 }

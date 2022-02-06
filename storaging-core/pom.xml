@@ -4,48 +4,31 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.dustlight.storaging</groupId>
-        <artifactId>storage-parent</artifactId>
+        <artifactId>storaging-parent</artifactId>
         <version>0.0.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>storage-mongodb</artifactId>
-    <description>对象存储服务 - MongoDB 实现模块</description>
+    <artifactId>storaging-core</artifactId>
+    <description>对象存储服务 - 核心模块</description>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>cn.dustlight.storaging</groupId>
-            <artifactId>storage-core</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
-            <scope>test</scope>
+            <groupId>cn.dustlight.auth</groupId>
+            <artifactId>auth-entities</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
