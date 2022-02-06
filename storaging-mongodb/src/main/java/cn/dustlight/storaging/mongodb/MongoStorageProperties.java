@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "plus.storage")
+@ConfigurationProperties(prefix = "dustlight.storaging")
 public class MongoStorageProperties {
 
     private String configCollectionName = "configs",objectCollectionName = "objects";
