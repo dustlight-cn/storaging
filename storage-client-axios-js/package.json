@@ -1,5 +1,5 @@
 {
-  "name": "@plus/storage-client-axios",
+  "name": "@plus/storage-client-axios-js",
   "version": "0.0.3-alpha",
   "description": "Client SDK for Storage-Service",
   "main": "index.ts",

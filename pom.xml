@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <groupId>plus.storage</groupId>
     <artifactId>storage-parent</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <description>PLUS 对象存储服务</description>
 
     <properties>
@@ -23,8 +23,8 @@
         <spring-boot.version>2.5.2</spring-boot.version>
         <springdoc.version>1.5.9</springdoc.version>
 
-        <auth.version>1.1.0-alpha-1-SNAPSHOT</auth.version>
-        <storage.version>0.0.5</storage.version>
+        <auth.version>1.1.1-alpha-1-SNAPSHOT</auth.version>
+        <storage.version>0.0.6</storage.version>
     </properties>
 
     <modules>
