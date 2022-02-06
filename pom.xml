@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
-    <groupId>plus.storage</groupId>
+    <groupId>cn.dustlight.storaging</groupId>
     <artifactId>storage-parent</artifactId>
     <version>0.0.3-SNAPSHOT</version>
-    <description>PLUS 对象存储服务</description>
+    <description>对象存储服务</description>
 
     <properties>
         <java.version>11</java.version>
@@ -23,7 +23,7 @@
         <spring-boot.version>2.5.2</spring-boot.version>
         <springdoc.version>1.5.9</springdoc.version>
 
-        <auth.version>1.1.1-alpha-1-SNAPSHOT</auth.version>
+        <auth.version>1.1.1-alpha-4</auth.version>
         <storage.version>0.0.6</storage.version>
     </properties>
 
@@ -45,28 +45,28 @@
             </dependency>
 
             <dependency>
-                <groupId>plus.storage</groupId>
+                <groupId>cn.dustlight.storaging</groupId>
                 <artifactId>storage-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>plus.storage</groupId>
+                <groupId>cn.dustlight.storaging</groupId>
                 <artifactId>storage-mongodb</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>plus.storage</groupId>
+                <groupId>cn.dustlight.storaging</groupId>
                 <artifactId>storage-cloud</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>plus.storage</groupId>
+                <groupId>cn.dustlight.storaging</groupId>
                 <artifactId>storage-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>plus.auth</groupId>
+                <groupId>cn.dustlight.auth</groupId>
                 <artifactId>auth-common</artifactId>
                 <version>${auth.version}</version>
                 <type>pom</type>

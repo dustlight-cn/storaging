@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>plus.storage</groupId>
+        <groupId>cn.dustlight.storaging</groupId>
         <artifactId>storage-parent</artifactId>
         <version>0.0.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>storage-core</artifactId>
-    <description>PLUS 对象存储服务 - 核心模块</description>
+    <description>对象存储服务 - 核心模块</description>
 
     <properties>
         <java.version>11</java.version>
@@ -26,7 +26,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>plus.auth</groupId>
+            <groupId>cn.dustlight.auth</groupId>
             <artifactId>auth-entities</artifactId>
         </dependency>
     </dependencies>
