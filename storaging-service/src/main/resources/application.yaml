@@ -1,0 +1,54 @@
+client:
+  id: "test"
+  secret: "e6423085f5165a58f8949e763c6691ffe44e2f86"
+  apiEndpoint: "https://api.dustlight.cn"
+  tokenUri: "https://api.dustlight.cn/v1/oauth/token"
+  checkTokenUri: "https://api.dustlight.cn/v1/token/validity"
+  jwkSetUri: "https://api.dustlight.cn/v1/jwk"
+
+# OAuth 配置
+dustlight:
+  storaging:
+    authorization-endpoint: "https://accounts.dustlight.cn/authorize"
+    config-collection-name: configs
+    object-collection-name: objects
+  auth:
+    oauth2:
+      client:
+        client-id: ${client.id}
+        client-secret: ${client.secret}
+        api-endpoint: ${client.apiEndpoint}
+        token-uri: ${client.tokenUri}
+      resource-server:
+        client-id: ${client.id}
+        client-secret: ${client.secret}
+        uri: ${client.checkTokenUri}
+        jwk-set-uri: ${client.jwkSetUri}
+  storage:
+#    tencent:
+#      cos:
+#        secret-id: SECRET_ID
+#        secret-key: SECRET_KEY
+#        bucket: BUCKET
+#        region: REGION
+# SpringDoc 配置
+springdoc:
+  api-docs:
+    enabled: on
+    path: /doc
+  swagger-ui:
+    path: /doc.html
+    oauth:
+      client-id: ${client.id}
+      additional-query-string-params:
+        jwt: true
+# MongoDB 配置
+spring:
+  data:
+    mongodb:
+      uri: mongodb://username:password@localhost:27017/storaging?authSource=admin&readPreference=primary&directConnection=true&ssl=false
+
+logging:
+  level:
+    cn.dustlight.storaging.*: debug
+

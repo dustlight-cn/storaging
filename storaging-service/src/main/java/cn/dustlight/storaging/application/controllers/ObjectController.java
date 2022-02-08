@@ -113,17 +113,17 @@ public class ObjectController {
                                     ReactiveAuthClient reactiveAuthClient,
                                     AuthPrincipal principal) {
         return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.exists(id))
-                .flatMap(flag -> {
-                    if ((Boolean) flag != true)
-                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
-                    return storageService.generateGetUrl(id, 1000 * 60 * 5)
-                            .flatMap(s -> {
-                                exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                                exchange.getResponse().getHeaders().add("Location", s.toString());
-                                return Mono.empty();
-                            });
-                });
+                .flatMap(cid -> storageService.exists(id)
+                        .flatMap(flag -> {
+                            if ((Boolean) flag != true)
+                                ErrorEnum.OBJECT_NOT_FOUND.throwException();
+                            return storageService.generateGetUrl(String.format("%s/%s", cid, id), 1000 * 60 * 5)
+                                    .flatMap(s -> {
+                                        exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
+                                        exchange.getResponse().getHeaders().add("Location", s.toString());
+                                        return Mono.empty();
+                                    });
+                        }));
     }
 
     @PutMapping("/{id}/data")
@@ -163,7 +163,7 @@ public class ObjectController {
                                 origin.setType("");
                             }
 
-                            return storageService.generatePut(id, 1000 * 60 * 5, headers)
+                            return storageService.generatePut(String.format("%s/%s", cid, id), 1000 * 60 * 5, headers)
                                     .flatMap(s -> {
                                         exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
                                         exchange.getResponse().getHeaders().add("Location", s.toString());
