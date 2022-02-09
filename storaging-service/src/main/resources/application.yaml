@@ -25,12 +25,12 @@ dustlight:
         uri: ${client.checkTokenUri}
         jwk-set-uri: ${client.jwkSetUri}
   storage:
-#    tencent:
-#      cos:
-#        secret-id: SECRET_ID
-#        secret-key: SECRET_KEY
-#        bucket: BUCKET
-#        region: REGION
+    tencent:
+      cos:
+        secret-id: AKIDReOvCtZRFqeFaf6SzILbfg5YzC8oeo5F
+        secret-key: NVP3QWDeo68zZ83i9oGSO5pzwQvCE0ci
+        bucket: storaging-1251585190
+        region: ap-guangzhou
 # SpringDoc 配置
 springdoc:
   api-docs:
@@ -46,7 +46,7 @@ springdoc:
 spring:
   data:
     mongodb:
-      uri: mongodb://username:password@localhost:27017/storaging?authSource=admin&readPreference=primary&directConnection=true&ssl=false
+      uri: mongodb://dustlight:hansin1997@localhost:27017/storaging?authSource=admin&readPreference=primary&directConnection=true&ssl=false
 
 logging:
   level:
