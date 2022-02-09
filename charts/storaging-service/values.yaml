@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  repository: dustlightcn/storaging-service
+  tag: "0.0.3-alpha"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: "storaging.dustlight.cn"
+  tls:
+    enabled: false
+    crt: ""
+    key: ""
+
+storage:
+  type: tencent # tencent | alibaba
+  tencent:
+    secretKey: "xx"
+    secretId: "xx"
+    bucket: "xx"
+    region: "xx"
+  alibaba:
+    accessKeyId: ""
+    secretAccessKey: ""
+    bucket: ""
+    endpoint: ""
+
+config:
+  mongo:
+    url: "mongodb+srv://username:password@mongo-svc/storaging?ssl=false"
+    collection:
+      config: "config"
+      object: "object"
+  auth:
+    clientId: "test"
+    clientSecret: "e6423085f5165a58f8949e763c6691ffe44e2f86"
+    apiEndpoint: "https://api.dustlight.cn"
+    tokenUri: "https://api.dustlight.cn/v1/oauth/token"
+    checkTokenUri: "https://api.dustlight.cn/v1/token/validity"
+    jwkSetUri: "https://api.dustlight.cn/v1/jwk"
+    authorizationEndpoint: "https://accounts.dustlight.cn/authorize"
+
+logging: debug

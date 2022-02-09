@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-storaging-service-config
+data:
+  application.yaml: |-
+    client:
+      id: {{ .Values.config.auth.clientId | quote }}
+      secret: {{ .Values.config.auth.clientSecret | quote }}
+      apiEndpoint: {{ .Values.config.auth.apiEndpoint | quote }}
+      tokenUri: {{ .Values.config.auth.tokenUri | quote }}
+      checkTokenUri: {{ .Values.config.auth.checkTokenUri | quote }}
+      jwkSetUri: {{ .Values.config.auth.jwkSetUri | quote }}
+
+    # OAuth 配置
+    dustlight:
+      storaging:
+        authorization-endpoint: {{ .Values.config.auth.authorizationEndpoint | quote }}
+        config-collection-name: {{ .Values.config.mongo.collection.config | quote }}
+        object-collection-name: {{ .Values.config.mongo.collection.object | quote }}
+      auth:
+        oauth2:
+          client:
+            client-id: ${client.id}
+            client-secret: ${client.secret}
+            api-endpoint: ${client.apiEndpoint}
+            token-uri: ${client.tokenUri}
+          resource-server:
+            client-id: ${client.id}
+            client-secret: ${client.secret}
+            uri: ${client.checkTokenUri}
+            jwk-set-uri: ${client.jwkSetUri}
+      storage:
+    {{ if eq .Values.storage.type "alibaba" }}
+        alibaba:
+          oss:
+            access-key-id: {{ .Values.storage.alibaba.accessKeyId  | quote }}
+            secret-access-key: {{ .Values.storage.alibaba.secretAccessKey  | quote }}
+            bucket: {{ .Values.storage.alibaba.bucket  | quote }}
+            endpoint: {{ .Values.storage.alibaba.endpoint  | quote }}
+    {{ else if eq .Values.storage.type "tencent" }}
+        tencent:
+          cos:
+            secret-key: {{ .Values.storage.tencent.secretKey  | quote }}
+            secret-id: {{ .Values.storage.tencent.secretId  | quote }}
+            bucket: {{ .Values.storage.tencent.bucket  | quote }}
+            region: {{ .Values.storage.tencent.region  | quote }}
+    {{ end }}
+    # SpringDoc 配置
+    springdoc:
+      api-docs:
+        enabled: on
+        path: /doc
+      swagger-ui:
+        path: /doc.html
+        oauth:
+          client-id: ${client.id}
+          additional-query-string-params:
+            jwt: true
+    # MongoDB 配置
+    spring:
+      data:
+        mongodb:
+          uri: {{ .Values.config.mongo.url | quote }}
+
+    logging:
+      level:
+        cn.dustlight.storaging.*: {{ .Values.logging }}
+
