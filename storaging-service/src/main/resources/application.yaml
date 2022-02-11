@@ -27,10 +27,11 @@ dustlight:
   storage:
 #    tencent:
 #      cos:
-#        secret-id: SECRET_ID
-#        secret-key: SECRET_KEY
-#        bucket: BUCKET
-#        region: REGION
+#        secret-id: <>
+#        secret-key: <>
+#        bucket: <>
+#        region: <>
+
 # SpringDoc 配置
 springdoc:
   api-docs:
@@ -46,7 +47,7 @@ springdoc:
 spring:
   data:
     mongodb:
-      uri: mongodb://username:password@localhost:27017/storaging?authSource=admin&readPreference=primary&directConnection=true&ssl=false
+      uri: mongodb://dustlight:hansin1997@localhost:27017/storaging?authSource=admin&readPreference=primary&directConnection=true&ssl=false
 
 logging:
   level:
