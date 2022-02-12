@@ -43,9 +43,7 @@ public class UrlStorageService<T extends StorageObject> implements ObjectUrlGene
 
     @Override
     public Mono<Void> delete(String id) {
-        return storageService.delete(id).doOnSuccess(v -> {
-            urlGenerator.delete(id);
-        });
+        return storageService.delete(id).flatMap(v -> urlGenerator.delete(id));
     }
 
     @Override

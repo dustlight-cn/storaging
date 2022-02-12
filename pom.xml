@@ -6,7 +6,8 @@
     <groupId>cn.dustlight.storaging</groupId>
     <artifactId>storaging-parent</artifactId>
     <version>0.0.3-alpha</version>
-    <description>对象存储服务</description>
+    <name>storaging-parent</name>
+    <description>对象存储与配置服务</description>
 
     <properties>
         <java.version>11</java.version>
@@ -123,18 +124,18 @@
                                 <goal>repackage</goal>
                             </goals>
                         </execution>
-                        <execution>
-                            <id>pre-integration-test</id>
-                            <goals>
-                                <goal>start</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>post-integration-test</id>
-                            <goals>
-                                <goal>stop</goal>
-                            </goals>
-                        </execution>
+<!--                        <execution>-->
+<!--                            <id>pre-integration-test</id>-->
+<!--                            <goals>-->
+<!--                                <goal>start</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                        <execution>-->
+<!--                            <id>post-integration-test</id>-->
+<!--                            <goals>-->
+<!--                                <goal>stop</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
                     </executions>
                 </plugin>
                 <plugin>
@@ -219,18 +220,6 @@
         </pluginManagement>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>rdc-releases</id>
-            <name>Release</name>
-            <url>https://packages.aliyun.com/maven/repository/2106480-release-GJHJba/</url>
-        </repository>
-        <snapshotRepository>
-            <id>rdc-snapshots</id>
-            <name>Snapshot</name>
-            <url>https://packages.aliyun.com/maven/repository/2106480-snapshot-hEcsFi/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <repositories>
         <repository>
@@ -253,48 +242,28 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <profiles>
-        <profile>
-            <id>native</id>
-            <properties>
-                <repackage.classifier>exec</repackage.classifier>
-                <native-buildtools.version>0.9.1</native-buildtools.version>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.graalvm.buildtools</groupId>
-                    <artifactId>junit-platform-native</artifactId>
-                    <version>${native-buildtools.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.graalvm.buildtools</groupId>
-                        <artifactId>native-maven-plugin</artifactId>
-                        <version>${native-buildtools.version}</version>
-                        <executions>
-                            <execution>
-                                <id>test-native</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>build-native</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>OSS Snapshots Repository</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>OSS Staging Repository</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <url>https://github.com/dustlight-cn/storaging</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo,manual</distribution>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
@@ -304,4 +273,9 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git:https://github.com/dustlight-cn/storaging.git</connection>
+        <developerConnection>scm:git:https://github.com/dustlight-cn/storaging.git</developerConnection>
+        <url>https://github.com/dustlight-cn/storaging</url>
+    </scm>
 </project>
