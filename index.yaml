@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  storaging-service:
+  - apiVersion: v2
+    appVersion: 0.0.3-alpha
+    created: "2022-02-12T16:32:05.174424338Z"
+    description: Storage service
+    digest: ad2d07f7f9873fa76ffd806b844e3ec61ba0182386d225a0d425d771c0bc1f71
+    name: storaging-service
+    type: application
+    urls:
+    - https://github.com/dustlight-cn/storaging/releases/download/storaging-service-0.0.1/storaging-service-0.0.1.tgz
+    version: 0.0.1
+generated: "2022-02-12T16:32:05.174433338Z"
