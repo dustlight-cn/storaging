@@ -94,7 +94,7 @@ public class ObjectController {
                     tmp.setId(id);
                     tmp.setName(object.getName());
                     tmp.setDescription(object.getDescription());
-                    tmp.setAdditional(object.getAdditional());
+//                    tmp.setAdditional(object.getAdditional());
                     tmp.setCanRead(object.getCanRead());
                     tmp.setCanWrite(object.getCanWrite());
                     tmp.setOwner(object.getOwner());

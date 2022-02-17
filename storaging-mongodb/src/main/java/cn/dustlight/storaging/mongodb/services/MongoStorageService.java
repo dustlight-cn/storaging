@@ -74,7 +74,7 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
         if (object.getCanRead() != null)
             update.set("canRead", object.getCanRead());
         if (object.getCanWrite() != null)
-            update.set("canRead", object.getCanWrite());
+            update.set("canWrite", object.getCanWrite());
         if (object.getSize() != null)
             update.set("size", object.getSize());
         if (object.getType() != null)
