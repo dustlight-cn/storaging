@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <groupId>cn.dustlight.storaging</groupId>
     <artifactId>storaging-parent</artifactId>
-    <version>0.0.3-alpha</version>
+    <version>0.0.4-alpha</version>
     <name>storaging-parent</name>
     <description>对象存储与配置服务</description>
 
