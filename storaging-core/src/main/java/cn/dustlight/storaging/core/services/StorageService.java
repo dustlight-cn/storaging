@@ -8,17 +8,17 @@ public interface StorageService<T extends StorageObject> {
 
     Mono<T> create(StorageObject object);
 
-    Mono<T> get(String id);
+    Mono<T> get(String id,String uid,String clientId);
 
-    Mono<Void> put(StorageObject object);
+    Mono<Void> put(StorageObject object,String uid,String clientId);
 
-    Mono<Void> delete(String id);
+    Mono<Void> delete(String id,String uid,String clientId);
 
-    Mono<Boolean> exists(String id);
+    Mono<Boolean> exists(String id,String uid,String clientId);
 
     Mono<QueryResult<T>> find(String keywords,
                               int page,
                               int size,
                               String clientId,
-                              String owner);
+                              String uid);
 }

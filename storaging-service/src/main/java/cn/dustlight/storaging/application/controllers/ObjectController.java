@@ -23,6 +23,8 @@ import cn.dustlight.storaging.core.services.UrlStorageService;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/v1/objects")
@@ -32,7 +34,7 @@ import java.util.Arrays;
 public class ObjectController {
 
     @Autowired
-    private UrlStorageService storageService;
+    private UrlStorageService<StorageObject> storageService;
 
     @Operation(summary = "创建对象", description = "创建一个对象。")
     @PostMapping("")
@@ -63,10 +65,15 @@ public class ObjectController {
     @GetMapping("/{id}")
     public Mono<StorageObject> getObject(@PathVariable(name = "id") String id,
                                          @RequestParam(name = "cid", required = false) String clientId,
+                                         @RequestParam(name = "admin", required = false) boolean admin,
                                          ReactiveAuthClient reactiveAuthClient,
                                          AuthPrincipal principal) {
-        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.get(id));
+        Mono<String> obtainClientId = admin ?
+                AuthPrincipalUtil.obtainClientIdRequireMember(reactiveAuthClient, clientId, principal)
+                :
+                AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal);
+        return obtainClientId
+                .flatMap(cid -> storageService.get(id, admin ? null : principal.getUidString(), cid));
     }
 
     @Operation(summary = "更新对象", description = "更新指定对象。")
@@ -74,14 +81,15 @@ public class ObjectController {
     public Mono<Void> putObject(@PathVariable(name = "id") String id,
                                 @RequestBody BaseStorageObject object,
                                 @RequestParam(name = "cid", required = false) String clientId,
+                                @RequestParam(name = "admin", required = false) boolean admin,
                                 ReactiveAuthClient reactiveAuthClient,
                                 AuthPrincipal principal) {
-        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.exists(id))
-                .flatMap(flag -> {
-                    if ((Boolean) flag != true)
-                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
-
+        Mono<String> obtainClientId = admin ?
+                AuthPrincipalUtil.obtainClientIdRequireMember(reactiveAuthClient, clientId, principal)
+                :
+                AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal);
+        return obtainClientId
+                .flatMap(cid -> {
                     BaseStorageObject tmp = new BaseStorageObject();
                     tmp.setId(id);
                     tmp.setName(object.getName());
@@ -91,7 +99,7 @@ public class ObjectController {
                     tmp.setCanWrite(object.getCanWrite());
                     tmp.setOwner(object.getOwner());
 
-                    return storageService.put(tmp);
+                    return storageService.put(tmp, admin ? null : principal.getUidString(), cid);
                 });
     }
 
@@ -99,10 +107,17 @@ public class ObjectController {
     @DeleteMapping("/{id}")
     public Mono<Void> deleteObject(@PathVariable(name = "id") String id,
                                    @RequestParam(name = "cid", required = false) String clientId,
+                                   @RequestParam(name = "admin", required = false) boolean admin,
                                    ReactiveAuthClient reactiveAuthClient,
                                    AuthPrincipal principal) {
-        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.delete(id));
+        Mono<String> obtainClientId = admin ?
+                AuthPrincipalUtil.obtainClientIdRequireMember(reactiveAuthClient, clientId, principal)
+                :
+                AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal);
+        return obtainClientId
+                .flatMap(cid -> storageService.delete(id, admin ? null : principal.getUidString(), cid)
+                        .doOnSuccess(unused -> storageService.deleteObject(String.format("%s/%s", cid, id)))
+                );
     }
 
     @Operation(summary = "获取对象数据", description = "获取对象的数据。")
@@ -110,20 +125,21 @@ public class ObjectController {
     public Mono<Void> getObjectData(@PathVariable(name = "id") String id,
                                     ServerWebExchange exchange,
                                     @RequestParam(name = "cid", required = false) String clientId,
+                                    @RequestParam(name = "admin", required = false) boolean admin,
                                     ReactiveAuthClient reactiveAuthClient,
                                     AuthPrincipal principal) {
-        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.exists(id)
-                        .flatMap(flag -> {
-                            if ((Boolean) flag != true)
-                                ErrorEnum.OBJECT_NOT_FOUND.throwException();
-                            return storageService.generateGetUrl(String.format("%s/%s", cid, id), 1000 * 60 * 5)
-                                    .flatMap(s -> {
-                                        exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                                        exchange.getResponse().getHeaders().add("Location", s.toString());
-                                        return Mono.empty();
-                                    });
-                        }));
+        Mono<String> obtainClientId = admin ?
+                AuthPrincipalUtil.obtainClientIdRequireMember(reactiveAuthClient, clientId, principal)
+                :
+                AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal);
+        return obtainClientId
+                .flatMap(cid -> storageService.get(id, admin ? null : principal.getUidString(), cid)
+                        .flatMap(obj -> storageService.generateGetUrl(String.format("%s/%s", cid, id), 1000 * 60 * 5)
+                                .flatMap(s -> {
+                                    exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
+                                    exchange.getResponse().getHeaders().add("Location", s);
+                                    return Mono.empty();
+                                })));
     }
 
     @PutMapping("/{id}/data")
@@ -139,13 +155,26 @@ public class ObjectController {
                                     @RequestHeader(name = "Content-Disposition", defaultValue = "attachment") String contentDisposition,
                                     ServerWebExchange exchange,
                                     @RequestParam(name = "cid", required = false) String clientId,
+                                    @RequestParam(name = "admin", required = false) boolean admin,
                                     ReactiveAuthClient reactiveAuthClient,
                                     AuthPrincipal principal) {
-        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.exists(id)
-                        .flatMap(flag -> {
-                            if ((Boolean) flag != true)
-                                ErrorEnum.OBJECT_NOT_FOUND.throwException();
+        Mono<String> obtainClientId = admin ?
+                AuthPrincipalUtil.obtainClientIdRequireMember(reactiveAuthClient, clientId, principal)
+                :
+                AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal);
+        return obtainClientId
+                .flatMap(cid -> storageService.get(id, null, cid)
+                        .flatMap(obj -> {
+                            if(!admin){
+                                Set<String> accessList = new HashSet<>();
+                                if (obj.getOwner() != null)
+                                    accessList.addAll(obj.getOwner());
+                                if (obj.getCanWrite() != null)
+                                    accessList.addAll(obj.getCanWrite());
+                                if (!accessList.contains(principal.getUidString()))
+                                    return Mono.error(ErrorEnum.ACCESS_DENIED.getException());
+                            }
+
                             var oldHeader = exchange.getRequest().getHeaders();
                             var headers = new HttpHeaders();
                             if (oldHeader != null)
@@ -166,8 +195,8 @@ public class ObjectController {
                             return storageService.generatePut(String.format("%s/%s", cid, id), 1000 * 60 * 5, headers)
                                     .flatMap(s -> {
                                         exchange.getResponse().setStatusCode(HttpStatus.TEMPORARY_REDIRECT);
-                                        exchange.getResponse().getHeaders().add("Location", s.toString());
-                                        return storageService.put(origin);
+                                        exchange.getResponse().getHeaders().add("Location", s);
+                                        return storageService.put(origin, principal.getUidString(), cid);
                                     });
                         })
                 );
@@ -179,9 +208,13 @@ public class ObjectController {
                                                         @RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                                         @RequestParam(name = "cid", required = false) String clientId,
+                                                        @RequestParam(name = "admin", required = false) boolean admin,
                                                         ReactiveAuthClient reactiveAuthClient,
                                                         AuthPrincipal principal) {
-        return AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
-                .flatMap(cid -> storageService.find(keywords, page, size, cid, principal.getUidString()));
+        return admin ? AuthPrincipalUtil.obtainClientIdRequireMember(reactiveAuthClient, clientId, principal)
+                .flatMap(cid -> storageService.find(keywords, page, size, cid, null))
+                :
+                AuthPrincipalUtil.obtainClientId(reactiveAuthClient, clientId, principal)
+                        .flatMap(cid -> storageService.find(keywords, page, size, cid, principal.getUidString()));
     }
 }

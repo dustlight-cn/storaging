@@ -6,9 +6,9 @@ import reactor.core.publisher.Mono;
 
 public interface ObjectUrlGenerator {
 
-    Mono<String> generateGetUrl(String id, long expiresIn);
+    Mono<String> generateGetUrl(String key, long expiresIn);
 
-    Mono<String> generatePut(String id, long expiresIn, HttpHeaders httpHeaders);
+    Mono<String> generatePut(String key, long expiresIn, HttpHeaders httpHeaders);
 
-    Mono<Void> delete(String id);
+    Mono<Void> deleteObject(String key);
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -11,7 +12,6 @@ import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.StringUtils;
 import cn.dustlight.storaging.core.ErrorEnum;
-import cn.dustlight.storaging.core.StorageException;
 import cn.dustlight.storaging.core.entities.BaseStorageObject;
 import cn.dustlight.storaging.core.entities.QueryResult;
 import cn.dustlight.storaging.core.entities.StorageObject;
@@ -19,8 +19,6 @@ import cn.dustlight.storaging.core.services.StorageService;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
-
-import static org.springframework.data.mongodb.core.query.Criteria.*;
 
 @Getter
 @Setter
@@ -53,14 +51,19 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
     }
 
     @Override
-    public Mono<BaseStorageObject> get(String id) {
-        return operations.findById(id, BaseStorageObject.class, collectionName)
-                .onErrorMap(throwable -> new StorageException("Get object failed: " + throwable.getMessage(), throwable))
+    public Mono<BaseStorageObject> get(String id, String uid, String clientId) {
+        Criteria criteria = Criteria.where("_id").is(id).and("clientId").is(clientId);
+        if (StringUtils.hasText(uid))
+            criteria.orOperator(Criteria.where("owner").in(uid),
+                    Criteria.where("canRead").in(uid));
+        Query query = Query.query(criteria);
+        return operations.findOne(query, BaseStorageObject.class, collectionName)
+                .onErrorMap(throwable -> ErrorEnum.OBJECT_NOT_FOUND.details(throwable).getException())
                 .switchIfEmpty(Mono.error(ErrorEnum.OBJECT_NOT_FOUND.getException()));
     }
 
     @Override
-    public Mono<Void> put(StorageObject object) {
+    public Mono<Void> put(StorageObject object, String uid, String clientId) {
         Update update = new Update();
         if (object.getName() != null)
             update.set("name", object.getName());
@@ -76,33 +79,43 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
             update.set("size", object.getSize());
         if (object.getType() != null)
             update.set("type", object.getType());
-        if (object.getClientId() != null)
-            update.set("clientId", object.getClientId());
 
         update.set("updatedAt", new Date());
-        return operations.updateFirst(Query.query(where("_id").is(object.getId())),
-                update,
-                BaseStorageObject.class,
-                collectionName)
+
+        Criteria criteria = Criteria.where("_id").is(object.getId()).and("clientId").is(clientId);
+        if (StringUtils.hasText(uid))
+            criteria.orOperator(Criteria.where("owner").in(uid));
+        Query query = Query.query(criteria);
+        return operations.updateFirst(query,
+                        update,
+                        BaseStorageObject.class,
+                        collectionName)
                 .onErrorMap(throwable -> ErrorEnum.UPDATE_OBJECT_FAILED.details(throwable).getException())
-                .doOnSuccess(updateResult -> {
-                    if (updateResult.getMatchedCount() == 0)
-                        ErrorEnum.OBJECT_NOT_FOUND.throwException();
-                })
-                .then();
+                .flatMap(updateResult -> updateResult.getMatchedCount() == 0 ?
+                        Mono.error(ErrorEnum.OBJECT_NOT_FOUND.getException())
+                        : Mono.empty());
     }
 
     @Override
-    public Mono<Void> delete(String id) {
-        return operations.findAndRemove(new Query(where("_id").is(id)), BaseStorageObject.class, collectionName)
+    public Mono<Void> delete(String id, String uid, String clientId) {
+        Criteria criteria = Criteria.where("_id").is(id).and("clientId").is(clientId);
+        if (StringUtils.hasText(uid))
+            criteria.and("owner").in(uid);
+        Query query = Query.query(criteria);
+        return operations.findAndRemove(query, BaseStorageObject.class, collectionName)
                 .onErrorMap(throwable -> ErrorEnum.DELETE_OBJECT_FAILED.details(throwable).getException())
                 .switchIfEmpty(Mono.error(ErrorEnum.OBJECT_NOT_FOUND.getException()))
                 .then();
     }
 
     @Override
-    public Mono<Boolean> exists(String id) {
-        return operations.exists(new Query(where("_id").is(id)), BaseStorageObject.class, collectionName);
+    public Mono<Boolean> exists(String id, String uid, String clientId) {
+        Criteria criteria = Criteria.where("_id").is(id).and("clientId").is(clientId);
+        if (StringUtils.hasText(uid))
+            criteria.orOperator(Criteria.where("owner").in(uid),
+                    Criteria.where("canRead").in(uid));
+        Query query = Query.query(criteria);
+        return operations.exists(query, BaseStorageObject.class, collectionName);
     }
 
     @Override
@@ -110,34 +123,24 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
                                                      int page,
                                                      int size,
                                                      String clientId,
-                                                     String owner) {
-        return StringUtils.hasText(keywords) ?
-                operations.count(Query.query(TextCriteria.forDefaultLanguage().matching(keywords))
-                                .addCriteria(where("clientId").is(clientId)
-                                        .and("owner").elemMatch(new Criteria("$eq").is(owner))),
-                        BaseStorageObject.class,
-                        collectionName)
-                        .flatMap(c -> operations.find(Query.query(TextCriteria.forDefaultLanguage().matching(keywords))
-                                        .addCriteria(where("clientId").is(clientId)
-                                                .and("owner").elemMatch(new Criteria("$eq").is(owner)))
-                                        .with(Pageable.ofSize(size).withPage(page)),
+                                                     String uid) {
+        Criteria criteria = Criteria.where("clientId").is(clientId);
+        if (StringUtils.hasText(uid))
+            criteria.orOperator(Criteria.where("owner").in(uid),
+                    Criteria.where("canRead").in(uid));
+        Query query = Query.query(criteria);
+
+        if (StringUtils.hasText(keywords))
+            query.addCriteria(TextCriteria.forDefaultLanguage().matching(keywords));
+        return operations.count(query, collectionName)
+                .flatMap(count -> operations.find(query
+                                        .with(Pageable.ofSize(size).withPage(page))
+                                        .with(Sort.by(Sort.Order.desc("createdAt"))),
                                 BaseStorageObject.class,
                                 collectionName)
-                                .collectList()
-                                .map(baseStorageObjects -> new QueryResult<>(c, baseStorageObjects))
-                        ) :
-                operations.count(Query.query(where("clientId").is(clientId)
-                                .and("owner").elemMatch(new Criteria("$eq").is(owner))),
-                        BaseStorageObject.class,
-                        collectionName)
-                        .flatMap(c -> operations.find(Query.query(where("clientId").is(clientId)
-                                        .and("owner").elemMatch(new Criteria("$eq").is(owner)))
-                                        .with(Pageable.ofSize(size).withPage(page)),
-                                BaseStorageObject.class,
-                                collectionName)
-                                .collectList()
-                                .map(baseStorageObjects -> new QueryResult<>(c, baseStorageObjects))
-                        );
+                        .collectList()
+                        .map(objects -> new QueryResult<>(count, objects))
+                );
     }
 
 

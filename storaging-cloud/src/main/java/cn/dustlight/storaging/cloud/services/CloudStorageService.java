@@ -38,7 +38,7 @@ public class CloudStorageService implements ObjectUrlGenerator {
     }
 
     @Override
-    public Mono<Void> delete(String key) {
+    public Mono<Void> deleteObject(String key) {
         try {
             storage.remove(key);
             return Mono.empty();

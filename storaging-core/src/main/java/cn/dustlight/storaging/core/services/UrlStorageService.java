@@ -17,13 +17,18 @@ public class UrlStorageService<T extends StorageObject> implements ObjectUrlGene
     private StorageService storageService;
 
     @Override
-    public Mono<String> generateGetUrl(String id, long expiresIn) {
-        return urlGenerator.generateGetUrl(id, expiresIn);
+    public Mono<String> generateGetUrl(String key, long expiresIn) {
+        return urlGenerator.generateGetUrl(key, expiresIn);
     }
 
     @Override
-    public Mono<String> generatePut(String id, long expiresIn, HttpHeaders httpHeaders) {
-        return urlGenerator.generatePut(id, expiresIn, httpHeaders);
+    public Mono<String> generatePut(String key, long expiresIn, HttpHeaders httpHeaders) {
+        return urlGenerator.generatePut(key, expiresIn, httpHeaders);
+    }
+
+    @Override
+    public Mono<Void> deleteObject(String key) {
+        return urlGenerator.deleteObject(key);
     }
 
     @Override
@@ -32,23 +37,23 @@ public class UrlStorageService<T extends StorageObject> implements ObjectUrlGene
     }
 
     @Override
-    public Mono<T> get(String id) {
-        return storageService.get(id);
+    public Mono<T> get(String id, String uid, String clientId) {
+        return storageService.get(id, uid, clientId);
     }
 
     @Override
-    public Mono<Void> put(StorageObject object) {
-        return storageService.put(object);
+    public Mono<Void> put(StorageObject object, String uid, String clientId) {
+        return storageService.put(object, uid, clientId);
     }
 
     @Override
-    public Mono<Void> delete(String id) {
-        return storageService.delete(id).flatMap(v -> urlGenerator.delete(id));
+    public Mono<Void> delete(String id, String uid, String clientId) {
+        return storageService.delete(id, uid, clientId);
     }
 
     @Override
-    public Mono<Boolean> exists(String id) {
-        return storageService.exists(id);
+    public Mono<Boolean> exists(String id, String uid, String clientId) {
+        return storageService.exists(id, uid, clientId);
     }
 
     @Override
