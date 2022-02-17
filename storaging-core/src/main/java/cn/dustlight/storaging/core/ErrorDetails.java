@@ -16,6 +16,14 @@ public class ErrorDetails {
         exception = new StorageException(this);
     }
 
+    public ErrorDetails(int code, String message, Throwable throwable) {
+        this.code = code;
+        this.message = message;
+        exception = new StorageException(this, throwable);
+        if (throwable != null)
+            this.details = throwable.getMessage();
+    }
+
     public int getCode() {
         return code;
     }
@@ -52,6 +60,14 @@ public class ErrorDetails {
 
     public ErrorDetails details(String details) {
         this.details = details;
+        return this;
+    }
+
+    public ErrorDetails details(Throwable throwable) {
+        if (throwable != null) {
+            this.details = throwable.getMessage();
+            this.exception.setStackTrace(throwable.getStackTrace());
+        }
         return this;
     }
 

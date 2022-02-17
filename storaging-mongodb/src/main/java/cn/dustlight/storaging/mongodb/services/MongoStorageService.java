@@ -49,7 +49,7 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
         origin.setCreatedAt(t);
         origin.setUpdatedAt(t);
         return operations.insert(origin, collectionName)
-                .onErrorMap(throwable -> ErrorEnum.CREATE_OBJECT_FAILED.details(throwable.getMessage()).getException());
+                .onErrorMap(throwable -> ErrorEnum.CREATE_OBJECT_FAILED.details(throwable).getException());
     }
 
     @Override
@@ -84,7 +84,7 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
                 update,
                 BaseStorageObject.class,
                 collectionName)
-                .onErrorMap(throwable -> ErrorEnum.UPDATE_OBJECT_FAILED.details(throwable.getMessage()).getException())
+                .onErrorMap(throwable -> ErrorEnum.UPDATE_OBJECT_FAILED.details(throwable).getException())
                 .doOnSuccess(updateResult -> {
                     if (updateResult.getMatchedCount() == 0)
                         ErrorEnum.OBJECT_NOT_FOUND.throwException();
@@ -95,7 +95,7 @@ public class MongoStorageService implements StorageService<BaseStorageObject> {
     @Override
     public Mono<Void> delete(String id) {
         return operations.findAndRemove(new Query(where("_id").is(id)), BaseStorageObject.class, collectionName)
-                .onErrorMap(throwable -> ErrorEnum.DELETE_OBJECT_FAILED.details(throwable.getMessage()).getException())
+                .onErrorMap(throwable -> ErrorEnum.DELETE_OBJECT_FAILED.details(throwable).getException())
                 .switchIfEmpty(Mono.error(ErrorEnum.OBJECT_NOT_FOUND.getException()))
                 .then();
     }
