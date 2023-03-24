@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-storaging-service
@@ -18,5 +18,7 @@ spec:
           - path: /
             pathType: ImplementationSpecific
             backend:
-              serviceName: {{ .Release.Name }}-storaging-service
-              servicePort: 80
+              service:
+                name: {{ .Release.Name }}-storaging-service
+                port:
+                  number: 80
